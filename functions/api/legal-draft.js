@@ -1,4 +1,3 @@
-
 const ALLOWED_ORIGINS = [
   "https://k-law.ir",
   "https://www.k-law.ir",
@@ -9,8 +8,8 @@ const ALLOWED_ORIGINS = [
 
 const MODEL = "@cf/meta/llama-3.1-8b-instruct";
 const MAX_INPUT_LENGTH = 24000;
-const MAX_SEARCH_TERMS = 14;
 const MAX_RELEVANT_ARTICLES = 8;
+const MAX_SEARCH_TERMS = 28;
 
 function buildCorsHeaders(origin) {
   const headers = {
@@ -37,7 +36,9 @@ function jsonResponse(data, status = 200, origin = null) {
 
 function textValue(value) {
   if (typeof value === "string") return value.trim();
-  if (typeof value === "number") return String(value);
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value);
+  }
   return "";
 }
 
@@ -61,20 +62,25 @@ function normalizeDigits(value) {
   const persian = "۰۱۲۳۴۵۶۷۸۹";
   const arabic = "٠١٢٣٤٥٦٧٨٩";
 
-  return String(value || "").replace(/[۰-۹٠-٩]/g, digit => {
-    if (persian.includes(digit)) {
-      return String(persian.indexOf(digit));
-    }
+  return String(value ?? "").replace(/[۰-۹٠-٩]/g, digit => {
+    const p = persian.indexOf(digit);
+    if (p !== -1) return String(p);
 
-    return String(arabic.indexOf(digit));
+    const a = arabic.indexOf(digit);
+    if (a !== -1) return String(a);
+
+    return digit;
   });
 }
 
 function normalizeLegalText(value) {
-  return normalizeDigits(String(value || ""))
+  return normalizeDigits(String(value ?? ""))
+    .normalize("NFC")
     .replace(/[يى]/g, "ی")
     .replace(/ك/g, "ک")
-    .replace(/[\u200c\u200f\u202a-\u202e]/g, " ")
+    .replace(/[ۀة]/g, "ه")
+    .replace(/[\u200c\u200f\u202a-\u202e\u2066-\u2069]/g, " ")
+    .replace(/[ـ]/g, "")
     .replace(/[^\u0600-\u06FFa-zA-Z0-9\s]/g, " ")
     .replace(/\s+/g, " ")
     .trim()
@@ -93,10 +99,7 @@ function normalizeDocumentType(value) {
     return "شکواییه کیفری";
   }
 
-  if (
-    text.includes("اظهارنامه") ||
-    text.includes("notice")
-  ) {
+  if (text.includes("اظهارنامه") || text.includes("notice")) {
     return "اظهارنامه";
   }
 
@@ -108,8 +111,37 @@ function normalizeDocumentType(value) {
     return "دادخواست حقوقی";
   }
 
+  if (text.includes("لایحه")) return "لایحه حقوقی";
+
   return "پیش‌نویس قضایی";
 }
+
+const LEGAL_SYNONYMS = {
+  "قرض": ["بدهی", "دین", "مطالبه وجه", "استرداد وجه"],
+  "قرضی": ["بدهی", "دین", "مطالبه وجه"],
+  "بدهی": ["دین", "مطالبه وجه", "پرداخت دین"],
+  "پول": ["وجه", "مطالبه وجه", "دین"],
+  "پولم": ["وجه", "مطالبه وجه", "دین"],
+  "طلب": ["مطالبه وجه", "دین", "طلبکار"],
+  "طلبکار": ["مطالبه وجه", "دین"],
+  "بدهکار": ["دین", "الزام به پرداخت"],
+  "پس": ["استرداد وجه", "پرداخت دین"],
+  "نداده": ["عدم پرداخت", "مطالبه وجه"],
+  "نپرداخته": ["عدم پرداخت", "مطالبه وجه"],
+  "پرداخت": ["ایفای تعهد", "وفای به عهد"],
+  "قرارداد": ["تعهد", "الزام به ایفای تعهد"],
+  "تعهد": ["الزام به ایفای تعهد", "مسئولیت قراردادی"],
+  "خسارت": ["مسئولیت مدنی", "خسارت تاخیر تادیه"],
+  "تاخیر": ["خسارت تاخیر تادیه"],
+  "چک": ["قانون صدور چک", "مطالبه وجه چک"],
+  "اجاره": ["اجاره بها", "قانون مدنی"],
+  "فروش": ["بیع", "ثمن معامله", "الزام به پرداخت"],
+  "معامله": ["قرارداد", "تعهد"],
+  "ضمانت": ["ضمان", "مسئولیت"],
+  "تصادف": ["مسئولیت مدنی", "خسارت"],
+  "کارفرما": ["قرارداد کار", "مطالبات کارگری"],
+  "حقوق": ["مطالبات مزدی", "قرارداد کار"],
+};
 
 function extractSearchTerms(query) {
   const normalized = normalizeLegalText(query);
@@ -117,23 +149,36 @@ function extractSearchTerms(query) {
   const stopWords = new Set([
     "این", "آن", "برای", "من", "شما", "ایشان",
     "است", "بود", "شد", "شود", "شده", "کرد",
-    "کرده", "کنم", "کند", "باید", "میشود",
-    "هستم", "دارم", "دارد", "درباره", "مورد",
-    "موضوع", "لطفا", "قانون", "قانونی", "ماده",
-    "مواد", "مرتبط", "میخواهم", "می‌خواهم",
-    "شخص", "طرف", "داده", "خواهم", "کردن",
-    "دارند", "پس", "چند", "بار", "هم", "اما",
-    "باشد", "نیز", "بابت", "جهت", "خود",
+    "کرده", "کنم", "کند", "باید", "هستم", "دارم",
+    "دارد", "درباره", "مورد", "موضوع", "لطفا",
+    "قانون", "قانونی", "ماده", "مواد", "مرتبط",
+    "میخواهم", "شخص", "طرف", "داده", "خواهم",
+    "کردن", "دارند", "چند", "بار", "هم", "اما",
+    "باشد", "نیز", "بابت", "جهت", "خود", "میان",
+    "توسط", "کردند", "شدهاند", "کردهاند", "از",
+    "به", "با", "در", "و", "یا", "را", "که",
   ]);
 
   const words =
-    normalized.match(/[\u0600-\u06FF]{3,}|[0-9]{2,}/g) || [];
+    normalized.match(/[\u0600-\u06FF]{2,}|[0-9]{1,}/g) || [];
 
-  return [
-    ...new Set(
-      words.filter(word => !stopWords.has(word))
-    ),
-  ].slice(0, MAX_SEARCH_TERMS);
+  const expanded = new Set();
+
+  for (const word of words) {
+    if (!stopWords.has(word)) expanded.add(word);
+
+    for (const [key, synonyms] of Object.entries(LEGAL_SYNONYMS)) {
+      if (word === key || word.includes(key)) {
+        for (const synonym of synonyms) {
+          expanded.add(normalizeLegalText(synonym));
+        }
+      }
+    }
+  }
+
+  return [...expanded]
+    .filter(term => term && !stopWords.has(term))
+    .slice(0, MAX_SEARCH_TERMS);
 }
 
 async function findRelevantArticles(db, query) {
@@ -142,7 +187,6 @@ async function findRelevantArticles(db, query) {
   }
 
   const terms = extractSearchTerms(query);
-
   if (!terms.length) return [];
 
   const conditions = terms.map(() =>
@@ -153,7 +197,6 @@ async function findRelevantArticles(db, query) {
 
   for (const term of terms) {
     const pattern = `%${term}%`;
-
     params.push(pattern, pattern, pattern, term);
   }
 
@@ -168,7 +211,7 @@ async function findRelevantArticles(db, query) {
     FROM legal_articles
     WHERE is_active = 1
       AND (${conditions})
-    LIMIT 100
+    LIMIT 150
   `).bind(...params).all();
 
   const rows = result.results || [];
@@ -177,28 +220,44 @@ async function findRelevantArticles(db, query) {
     const keywords = normalizeLegalText(article.keywords);
     const lawName = normalizeLegalText(article.law_name);
     const articleText = normalizeLegalText(article.article_text);
-    const articleNo = normalizeDigits(article.article_no);
+    const articleNo = normalizeDigits(article.article_no).trim();
 
     let score = 0;
 
     for (const term of terms) {
-      if (keywords.includes(term)) score += 5;
+      if (keywords.includes(term)) score += 6;
       if (lawName.includes(term)) score += 2;
       if (articleText.includes(term)) score += 1;
+
       if (/^\d+$/.test(term) && articleNo === term) {
-        score += 4;
+        score += 8;
       }
     }
+
+    if (!article.article_text?.trim()) score -= 5;
 
     return score;
   }
 
-  return rows
-    .map(article => ({
-      ...article,
-      _score: scoreArticle(article),
-    }))
-    .filter(article => article._score > 0)
+  const deduplicated = new Map();
+
+  for (const article of rows) {
+    const key = [
+      normalizeLegalText(article.law_name),
+      normalizeDigits(article.article_no).trim(),
+    ].join("|");
+
+    const score = scoreArticle(article);
+    if (score <= 0) continue;
+
+    const previous = deduplicated.get(key);
+
+    if (!previous || score > previous._score) {
+      deduplicated.set(key, { ...article, _score: score });
+    }
+  }
+
+  return [...deduplicated.values()]
     .sort((a, b) => b._score - a._score)
     .slice(0, MAX_RELEVANT_ARTICLES)
     .map(({ _score, ...article }) => article);
@@ -207,140 +266,99 @@ async function findRelevantArticles(db, query) {
 function buildLegalContext(articles) {
   if (!articles.length) {
     return `
-هیچ ماده قانونی مرتبطی در دیتابیس موجود پیدا نشد.
-
-در این وضعیت:
-- شماره ماده یا متن قانون را حدس نزن.
-- رأی وحدت رویه، نظریه مشورتی یا بخشنامه نساز.
-- پیش‌نویس را تا حد امکان بر اساس اطلاعات پرونده تنظیم کن.
-- در بخش مستندات بنویس که مواد قانونی مرتبط باید از منبع رسمی بررسی شوند.
-- فقدان منبع در دیتابیس را به معنای فقدان قانون مرتبط تلقی نکن.
+هیچ ماده‌ای در جست‌وجوی فعلی دیتابیس پیدا نشد.
+این موضوع به معنای نبود قانون مرتبط نیست.
+شماره ماده، متن قانون، رأی وحدت رویه یا نظریه مشورتی نساز.
+در صورت امکان پیش‌نویس را با اطلاعات موجود تهیه کن و نیاز به بررسی منابع رسمی را صریحاً اعلام کن.
 `.trim();
   }
 
   return articles.map((article, index) => `
-منبع بازیابی‌شده شماره ${index + 1}
+منبع بازیابی‌شده ${index + 1}
 نام قانون: ${article.law_name || "نامشخص"}
-شماره ماده: ${article.article_no || "نامشخص"}
+شماره ماده ثبت‌شده: ${article.article_no || "نامشخص"}
 متن ثبت‌شده:
-${article.article_text || "متن موجود نیست"}
+${article.article_text || "متن ثبت نشده"}
 وضعیت اعتبار ثبت‌شده:
 ${article.effective_status || "نامشخص"}
-منبع:
-${article.source_url || "نشانی ثبت نشده"}
+نشانی منبع:
+${article.source_url || "ثبت نشده"}
 `).join("\n\n");
 }
 
 function buildSystemPrompt(documentType, articles) {
-  const legalContext = buildLegalContext(articles);
-
   return `
-نقش شما:
-دستیار تخصصی تنظیم پیش‌نویس اسناد و متون حقوقی ایران هستید.
-متن باید حرفه‌ای، مستدل، منسجم و قابل بازبینی باشد.
-شما وکیل پرونده نیستید، رأی قضایی صادر نمی‌کنید و نتیجه دعوا را تضمین نمی‌کنید.
+نقش:
+دستیار تنظیم پیش‌نویس حقوقی ایران هستی. متن باید رسمی، دقیق، منسجم و قابل بازبینی باشد. وکیل پرونده نیستی و نتیجه دعوا را تضمین نمی‌کنی.
 
-نوع سند درخواستی:
+نوع سند:
 ${documentType}
 
-قواعد اصلی:
+قواعد الزامی:
 
-۱. تحلیل حقوقی
-- ابتدا ماهیت واقعی موضوع را از شرح وقایع تشخیص بده.
-- میان دعوای حقوقی، اختلاف قراردادی و جرم تفاوت قائل شو.
-- صرف پرداخت‌نشدن بدهی یا انجام‌نشدن تعهد را بدون دلیل کافی جرم تلقی نکن.
-- مسیر حقوقی مناسب را با توجه به اطلاعات موجود بررسی کن.
-- اگر اطلاعات برای نتیجه‌گیری قطعی کافی نیست، محدودیت را توضیح بده.
+۱. تحلیل موضوع
+ماهیت حقوقی موضوع را تشخیص بده. صرف پرداخت‌نشدن بدهی را بدون دلایل کافی جرم تلقی نکن. مسیر حقوقی و کیفری را با هم مخلوط نکن.
 
-۲. حفظ اطلاعات پرونده
-- نام اشخاص، نام شرکت‌ها، مبلغ، تاریخ و وقایع اعلام‌شده را تغییر نده.
-- اطلاعات نامعلوم را جعل نکن.
-- اطلاعات ضروری ناموجود را با عبارت «تکمیل شود» مشخص کن.
-- اگر اطلاعات فرم با شرح کاربر تعارض دارد، تعارض را پنهان نکن.
-- واحد پول را بدون اجازه کاربر تبدیل نکن.
-- مدرک، قرارداد، اقرار، شاهد، ابلاغ یا سابقه قضایی جدید نساز.
+۲. صحت اطلاعات
+نام‌ها، شرکت‌ها، مبلغ، تاریخ و شرح وقایع را تغییر نده. هیچ قرارداد، رسید، شاهد، اقرار، ابلاغ یا واقعه‌ای نساز. اگر اطلاعات فرم با شرح کاربر تعارض دارد، آن را مشخص کن و فرض پنهانی نساز.
 
-۳. استناد به قانون
-- یک بخش مستقل با عنوان «مواد قانونی و مبانی قانونی مرتبط» بنویس.
-- ابتدا منابع بازیابی‌شده در انتهای این دستور را بررسی کن.
-- فقط متن و شماره ماده‌ای را که در منبع موجود است به آن منبع نسبت بده.
-- ارتباط واقعی هر ماده با دعوا را توضیح بده؛ صرف شباهت واژگان کافی نیست.
-- اگر ماده‌ای ارتباطی با دعوا ندارد، آن را صرفاً برای افزایش تعداد استنادها ذکر نکن.
-- وضعیت اعتبار ثبت‌شده را عیناً در نظر بگیر.
-- وضعیت «نیازمند تطبیق نهایی» به معنی تأیید اعتبار جاری نیست؛ این محدودیت را اعلام کن.
-- متن بازیابی‌شده را بدون بررسی، قانون قطعی و لازم‌الاجرا معرفی نکن.
-- اگر ماده مرتبطی در منابع موجود نیست، شماره آن را از حافظه حدس نزن.
-- نبود ماده در دیتابیس به معنای نبود قانون مرتبط نیست. توضیح بده که بررسی منبع رسمی و تکمیل بانک قوانین لازم است.
-- قوانین خاص مرتبط با موضوع را از نظر تحلیلی در نظر بگیر، اما شماره مواد، آرای قضایی و نظریات مشورتی تأییدنشده نساز.
-- اگر درباره صلاحیت مرجع رسیدگی اطلاعات کافی نداری، مرجع احتمالی و اطلاعات لازم برای تشخیص قطعی را مشخص کن.
-- در دعاوی مطالبه وجه، اصل خواسته، خسارت دادرسی و خسارت تأخیر تأدیه را از هم تفکیک کن. مطالبه هرکدام باید مبنای قانونی و شرایط مربوط را داشته باشد.
-- در صورت وجود منبع معتبر، نام قانون، شماره ماده، مضمون مرتبط و کاربرد آن در پرونده را بیاور.
+۳. استناد قانونی
+فقط شماره و متن ماده‌ای را که در منابع زیر آمده به آن منبع نسبت بده.
+هیچ شماره ماده، قانون، رأی قضایی یا نظریه مشورتی را جعل نکن.
+هر ماده را فقط زمانی به عنوان مستند معرفی کن که ارتباط واقعی آن با موضوع روشن باشد.
+وجود یک ماده در دیتابیس، به‌تنهایی اثبات‌کننده اعتبار جاری آن نیست.
+اگر وضعیت ماده «نیازمند تطبیق نهایی» است، همین محدودیت را صریح اعلام کن.
+اگر مواد بازیابی‌شده نامرتبط‌اند، آن‌ها را استناد نکن.
+اگر ماده مناسبی در منابع وجود ندارد، توضیح بده که بانک قوانین برای این موضوع کافی نیست و باید منبع رسمی بررسی شود.
+هرگز برای پرکردن بخش استنادات، یک ماده نامرتبط را وارد نکن.
 
-۴. ساختار خروجی
+۴. ساختار پاسخ
+فقط یک خروجی نهایی بده. پیش‌نویس را با این ساختار تنظیم کن:
 
-پیش‌نویس برای بازبینی حقوقی
+عنوان: پیش‌نویس برای بازبینی حقوقی
 
-الف) تشخیص موضوع
-نوع سند، ماهیت دعوا و مسیر حقوقی پیشنهادی را کوتاه توضیح بده.
+الف) تشخیص موضوع و مسیر حقوقی پیشنهادی
+در چند جمله کوتاه.
 
 ب) مشخصات طرفین
-خواهان یا شاکی، خوانده یا مشتکی‌عنه و اطلاعات تکمیلی را درج کن.
-اطلاعات نامعلوم را «تکمیل شود» بنویس.
+خواهان یا شاکی و خوانده یا مشتکی‌عنه. اطلاعات نامعلوم را «تکمیل شود» درج کن.
 
-ج) عنوان و خواسته
-خواسته یا تقاضا را دقیق، روشن و متناسب با وقایع اعلام‌شده تنظیم کن.
-از عبارت‌های مبهم مانند «دریافت پول» به‌تنهایی استفاده نکن؛ تا جایی که اطلاعات اجازه می‌دهد، نوع مطالبه را مشخص کن.
+ج) خواسته یا موضوع سند
+خواسته روشن و متناسب با اطلاعات کاربر. از عبارت مبهم «دریافت پول» به‌تنهایی استفاده نکن.
 
 د) بهای خواسته
-مبلغ اعلام‌شده، واحد پول و هر مورد نامعلوم را مشخص کن.
-اگر مبلغ یا واحد آن روشن نیست، حدس نزن.
+مبلغ و واحد پول را دقیقاً مطابق اطلاعات کاربر بنویس. اگر نامعلوم است، «تکمیل شود».
 
 هـ) دلایل و منضمات
-مدارک اعلام‌شده را درج کن.
-مدارک احتمالی دیگر را فقط با قید «در صورت وجود» پیشنهاد بده.
+فقط مدارک اعلام‌شده را قطعی درج کن. مدارک دیگر را با عبارت «در صورت وجود» پیشنهاد بده.
 
 و) شرح دادخواست یا متن سند
-شرح را با زبان رسمی و روشن تنظیم کن.
-وقایع را به ترتیب منطقی بیان کن.
-تعهد، تخلف ادعایی، مطالبه انجام تعهد و نتیجه مورد درخواست را به هم مرتبط کن.
-شرح کاربر را صرفاً تکرار نکن، اما هیچ واقعه جدیدی نساز.
+یک متن رسمی، منسجم و قابل بازبینی بنویس. وقایع را منطقی مرتب کن. شرح کاربر را عیناً تکرار نکن و هیچ واقعه‌ای نساز.
 
-ز) مواد قانونی و مبانی قانونی مرتبط
-برای هر منبع قابل استفاده:
-- نام قانون
-- شماره ماده
-- خلاصه دقیق مفاد مرتبط
-- دلیل ارتباط ماده با موضوع
-- وضعیت اعتبار و نیاز به تطبیق، در صورت وجود
+ز) مواد قانونی و مبانی مرتبط
+برای هر ماده مرتبط و موجود، نام قانون، شماره ماده، مضمون ثبت‌شده و کاربرد آن در پرونده را ذکر کن. وضعیت اعتبار ثبت‌شده را هم اعلام کن. اگر منبع معتبر کافی نیست، صریحاً بنویس که استناد قطعی نیازمند تطبیق با منبع رسمی است.
 
-اگر منبع کافی نیست، صریح و کوتاه اعلام کن که استناد دقیق نیازمند بررسی منبع رسمی است.
-
-ح) خواسته یا تقاضای نهایی
-یک متن رسمی و قابل استفاده تهیه کن که با اطلاعات پرونده و خواسته اعلام‌شده سازگار باشد.
-خواسته جدید یا خسارت اثبات‌نشده اضافه نکن.
+ح) خواسته نهایی
+یک عبارت رسمی و کوتاه، متناسب با اطلاعات پرونده.
 
 ط) مرجع صالح
-مرجع احتمالی رسیدگی و دلیل انتخاب آن را بیان کن.
-اگر اطلاعات لازم موجود نیست، موارد لازم برای تعیین صلاحیت را مشخص کن.
-بدون بررسی صلاحیت، مرجع را قطعی اعلام نکن.
+اگر اطلاعات لازم موجود است، مرجع احتمالی را با توضیح مبنای صلاحیت ذکر کن. اگر مبلغ، محل اقامت یا اطلاعات مؤثر نامعلوم است، از تعیین قطعی مرجع خودداری کن و فقط اطلاعات لازم را بخواه.
 
-ی) موارد تکمیلی پیش از ثبت
-فقط اطلاعات ضروری و ناموجود را فهرست کن.
-از تکرار فهرست‌های عمومی و توصیه‌های بی‌ارتباط خودداری کن.
+ی) موارد ضروری برای تکمیل
+فقط اطلاعات واقعاً ضروری و ناموجود را فهرست کن. بخش‌های قبلی را تکرار نکن.
 
 ک) تذکر بازبینی
-یادآوری کن که مشخصات، مدارک، صلاحیت و اعتبار مواد قانونی باید پیش از ثبت با منابع معتبر و مقررات جاری تطبیق داده شوند.
+تأکید کن که پیش از ثبت، مشخصات، مدارک، صلاحیت و اعتبار مواد قانونی بررسی شوند.
 
 ۵. سبک نگارش
-- فارسی رسمی، دقیق و قابل فهم.
-- متن باید پیش‌نویس واقعی باشد، نه فقط راهنمای عمومی.
-- از تکرار، حاشیه‌روی و فهرست‌سازی غیرضروری خودداری کن.
-- هرجا داده کافی وجود دارد، متن را کامل بنویس.
-- اگر اطلاعاتی نامعلوم است، آن را مشخص کن و کل پاسخ را به فهرست سؤال تبدیل نکن.
-- بین تحلیل حقوقی و متن آماده ثبت تمایز قائل شو.
+از تکرار عنوان‌ها، خواسته‌ها و فهرست‌های چندباره خودداری کن.
+متن را به راهنمای عمومی تبدیل نکن.
+اگر اطلاعات کافی است، پیش‌نویس واقعی ارائه بده.
+اگر اطلاعات ناقص است، فقط جای خالی‌های ضروری را مشخص کن.
+بین تحلیل حقوقی و متن آماده ثبت تمایز بگذار.
 
 منابع بازیابی‌شده از دیتابیس:
-${legalContext}
+${buildLegalContext(articles)}
 `.trim();
 }
 
@@ -358,44 +376,25 @@ function buildUserPrompt({
   form,
 }) {
   return `
-اطلاعات پرونده که کاربر ارائه کرده است:
+اطلاعات اعلام‌شده از سوی کاربر:
 
-نوع سند:
-${documentType}
-
-هدف:
-${task || "تنظیم پیش‌نویس حقوقی"}
-
-خواهان یا شاکی:
-${person1 || "اعلام نشده است"}
-
-خوانده یا مشتکی‌عنه:
-${person2 || "اعلام نشده است"}
-
-موضوع:
-${subject || "اعلام نشده است"}
-
-مبلغ:
-${amount || "اعلام نشده است"}
-
-تاریخ‌ها:
-${date || "اعلام نشده است"}
-
-محل:
-${location || "اعلام نشده است"}
-
-شرح واقعه:
-${description || "شرح کافی ارائه نشده است"}
-
-دلایل و مدارک:
-${evidence || "اعلام نشده است"}
-
-اطلاعات تکمیلی فرم:
-${safeJson(form)}
+نوع سند: ${documentType}
+هدف: ${task || "تنظیم پیش‌نویس حقوقی"}
+خواهان یا شاکی: ${person1 || "اعلام نشده"}
+خوانده یا مشتکی‌عنه: ${person2 || "اعلام نشده"}
+موضوع: ${subject || "اعلام نشده"}
+مبلغ: ${amount || "اعلام نشده"}
+تاریخ‌ها: ${date || "اعلام نشده"}
+محل: ${location || "اعلام نشده"}
+شرح واقعه: ${description || "ارائه نشده"}
+دلایل و مدارک: ${evidence || "اعلام نشده"}
+اطلاعات فرم: ${safeJson(form)}
 
 دستور:
-بر اساس همین اطلاعات و منابع قانونی بازیابی‌شده، پیش‌نویس حقوقی را مطابق ساختار تعیین‌شده تنظیم کن.
-اطلاعات ناموجود را نساز و مواد قانونی را بدون منبع معتبر به پرونده نسبت نده.
+با اتکا به همین اطلاعات و منابع قانونی موجود، یک پیش‌نویس منسجم بنویس.
+اطلاعات ناشناخته را جعل نکن.
+نام و مبلغ و شرح واقعه را در تمام بخش‌ها یکسان نگه دار.
+مواد قانونی را فقط در صورت وجود منبع مناسب ذکر کن.
 `.trim();
 }
 
@@ -407,21 +406,18 @@ function extractModelText(result) {
     result?.output_text,
     result?.text,
     result?.answer
-  ) || "";
+  );
 }
 
 function needsCitationCorrection(text, articles) {
   if (!articles.length) return false;
 
   const normalized = normalizeDigits(text);
-
   const hasArticleNumber =
     /(?:ماده|مواد|تبصره)\s*[0-9]+/.test(normalized);
 
   const hasLegalSection =
-    /مواد قانونی و مبانی قانونی مرتبط|مبانی قانونی|مستندات قانونی/.test(
-      text
-    );
+    /مواد قانونی و مبانی مرتبط|مواد قانونی|مبانی قانونی/.test(text);
 
   return !hasArticleNumber || !hasLegalSection;
 }
@@ -449,7 +445,7 @@ export async function onRequestPost({ request, env }) {
 
     if (!env?.AI || typeof env.AI.run !== "function") {
       return jsonResponse(
-        { error: "اتصال Workers AI با نام AI تنظیم نشده است." },
+        { error: "اتصال هوش مصنوعی با نام AI تنظیم نشده است." },
         503,
         origin
       );
@@ -457,7 +453,7 @@ export async function onRequestPost({ request, env }) {
 
     if (!env?.LEGAL_DB || typeof env.LEGAL_DB.prepare !== "function") {
       return jsonResponse(
-        { error: "اتصال دیتابیس با نام LEGAL_DB برقرار نیست." },
+        { error: "اتصال پایگاه قوانین با نام LEGAL_DB برقرار نیست." },
         503,
         origin
       );
@@ -478,7 +474,7 @@ export async function onRequestPost({ request, env }) {
 
     if (!body || typeof body !== "object" || Array.isArray(body)) {
       return jsonResponse(
-        { error: "بدنه درخواست باید JSON معتبر باشد." },
+        { error: "بدنه درخواست باید یک شیء JSON معتبر باشد." },
         400,
         origin
       );
@@ -496,143 +492,85 @@ export async function onRequestPost({ request, env }) {
 
     const form = { ...bodyData, ...bodyForm };
 
-    const documentType = normalizeDocumentType(
-      firstText(
-        body.documentType,
-        body.document_type,
-        body.type,
-        body.kind,
-        form.documentType,
-        form.document_type,
-        form.type
-      )
-    );
+    const documentType = normalizeDocumentType(firstText(
+      body.documentType,
+      body.document_type,
+      body.type,
+      body.kind,
+      form.documentType,
+      form.document_type,
+      form.type
+    ));
 
     const task = firstText(
-      body.task,
-      body.action,
-      form.task,
-      form.action
+      body.task, body.action, form.task, form.action
     );
 
     const person1 = firstText(
-      body.person1,
-      body.khahan,
-      body.plaintiff,
-      body.complainant,
-      form.person1,
-      form.khahan,
-      form.plaintiff,
-      form.complainant
+      body.person1, body.khahan, body.plaintiff, body.complainant,
+      form.person1, form.khahan, form.plaintiff, form.complainant
     );
 
     const person2 = firstText(
-      body.person2,
-      body["خوانده"],
-      body["خوانده_یا_مشتکی_عنه"],
-      body.defendant,
-      body.respondent,
-      form.person2,
-      form["خوانده"],
-      form["خوانده_یا_مشتکی_عنه"],
-      form.defendant,
-      form.respondent
+      body.person2, body["خوانده"], body["خوانده_یا_مشتکی_عنه"],
+      body.defendant, body.respondent,
+      form.person2, form["خوانده"], form["خوانده_یا_مشتکی_عنه"],
+      form.defendant, form.respondent
     );
 
     const subject = firstText(
-      body.subject,
-      body.title,
-      body["موضوع"],
-      form.subject,
-      form.title,
-      form["موضوع"]
+      body.subject, body.title, body["موضوع"],
+      form.subject, form.title, form["موضوع"]
     );
 
     const description = firstText(
-      body.description,
-      body.desc,
-      body["متن"],
-      body["شرح_ماجرا"],
-      form.description,
-      form.desc,
-      form["متن"],
-      form["شرح_ماجرا"]
+      body.description, body.desc, body["متن"], body["شرح_ماجرا"],
+      form.description, form.desc, form["متن"], form["شرح_ماجرا"]
     );
 
     const evidence = firstText(
-      body.evidence,
-      body["مدارک"],
-      form.evidence,
-      form["مدارک"]
+      body.evidence, body["مدارک"], form.evidence, form["مدارک"]
     );
 
     const amount = firstText(
-      body.amount,
-      body.claimAmount,
-      body.amountClaimed,
-      body.value,
-      body.baha,
-      body.mablagh,
-      form.amount,
-      form.claimAmount,
-      form.amountClaimed,
-      form.value,
-      form.baha,
-      form.mablagh
+      body.amount, body.claimAmount, body.amountClaimed,
+      body.value, body.baha, body.mablagh,
+      form.amount, form.claimAmount, form.amountClaimed,
+      form.value, form.baha, form.mablagh
     );
 
     const date = firstText(
-      body.date,
-      body.contractDate,
-      body.dueDate,
-      body.deadline,
-      body.tarikh,
-      form.date,
-      form.contractDate,
-      form.dueDate,
-      form.deadline,
-      form.tarikh
+      body.date, body.contractDate, body.dueDate,
+      body.deadline, body.tarikh,
+      form.date, form.contractDate, form.dueDate,
+      form.deadline, form.tarikh
     );
 
     const location = firstText(
-      body.location,
-      body.city,
-      body.address,
-      body.place,
-      body.mahal,
-      form.location,
-      form.city,
-      form.address,
-      form.place,
-      form.mahal
+      body.location, body.city, body.address, body.place, body.mahal,
+      form.location, form.city, form.address, form.place, form.mahal
     );
 
     if (!description && !subject && !task) {
       return jsonResponse(
-        { error: "موضوع یا شرح واقعه ارائه نشده است." },
+        { error: "لطفاً موضوع یا شرح واقعه را وارد کنید." },
         400,
         origin
       );
     }
 
-    if (
-      description.length > MAX_INPUT_LENGTH ||
-      subject.length > MAX_INPUT_LENGTH ||
-      task.length > MAX_INPUT_LENGTH ||
-      evidence.length > MAX_INPUT_LENGTH
-    ) {
-      return jsonResponse(
-        { error: "یکی از بخش‌های ورودی بیش از حد طولانی است." },
-        413,
-        origin
-      );
+    for (const value of [description, subject, task, evidence, amount]) {
+      if (value.length > MAX_INPUT_LENGTH) {
+        return jsonResponse(
+          { error: "یکی از بخش‌های ورودی بیش از حد طولانی است." },
+          413,
+          origin
+        );
+      }
     }
 
     const searchQuery = [
-      subject,
-      task,
-      description,
-      evidence,
+      subject, task, description, evidence,
     ].filter(Boolean).join(" ");
 
     const relevantArticles = await findRelevantArticles(
@@ -640,10 +578,7 @@ export async function onRequestPost({ request, env }) {
       searchQuery
     );
 
-    const system = buildSystemPrompt(
-      documentType,
-      relevantArticles
-    );
+    const system = buildSystemPrompt(documentType, relevantArticles);
 
     const userPrompt = buildUserPrompt({
       documentType,
@@ -676,16 +611,14 @@ export async function onRequestPost({ request, env }) {
 
     if (needsCitationCorrection(answerText, relevantArticles)) {
       const correctionPrompt = `
-پاسخ قبلی ساختار استناد قانونی کافی ندارد.
-
-پاسخ را بازنویسی کن و بخش «مواد قانونی و مبانی قانونی مرتبط» را اضافه کن.
+پاسخ زیر را یک بار بازنویسی کن تا ساختار حقوقی کامل و منسجم داشته باشد.
+بخش «مواد قانونی و مبانی مرتبط» را در صورت وجود منابع مرتبط کامل کن.
 فقط از منابع درج‌شده در پیام سیستم استفاده کن.
-شماره یا متن ماده جدیدی نساز.
-برای هر ماده، ارتباط آن با موضوع پرونده را توضیح بده.
-وضعیت اعتبار ثبت‌شده را رعایت کن.
-اگر ماده بازیابی‌شده با موضوع ارتباط واقعی ندارد، آن را استناد نکن.
-اگر منبع کافی نیست، محدودیت را روشن بیان کن.
-اطلاعات پرونده را تغییر نده و متن را به یک راهنمای عمومی تبدیل نکن.
+شماره یا متن ماده جدید نساز.
+مواد نامرتبط را صرفاً برای افزودن استناد وارد نکن.
+اطلاعات پرونده را تغییر نده.
+تکرارها و توضیحات عمومی غیرضروری را حذف کن.
+اگر منابع برای استناد کافی نیستند، این محدودیت را صریح بیان کن.
 
 پاسخ قبلی:
 ${answerText}
@@ -704,39 +637,28 @@ ${userPrompt}
       });
 
       const correctedText = extractModelText(corrected);
-
-      if (correctedText) {
-        answerText = correctedText;
-      }
+      if (correctedText) answerText = correctedText;
     }
 
-    return jsonResponse(
-      {
-        success: true,
-        documentType,
-        text: answerText,
-        answer: answerText,
-        draft: answerText,
-        legalSourcesFound: relevantArticles.length,
-        legalSources: relevantArticles.map(article => ({
-          lawName: article.law_name,
-          articleNo: article.article_no,
-          sourceUrl: article.source_url,
-          status: article.effective_status,
-        })),
-      },
-      200,
-      origin
-    );
+    return jsonResponse({
+      success: true,
+      documentType,
+      text: answerText,
+      answer: answerText,
+      draft: answerText,
+      legalSourcesFound: relevantArticles.length,
+      legalSources: relevantArticles.map(article => ({
+        lawName: article.law_name,
+        articleNo: article.article_no,
+        sourceUrl: article.source_url,
+        status: article.effective_status,
+      })),
+    }, 200, origin);
   } catch (err) {
     console.error("legal-draft error:", err);
 
-    return jsonResponse(
-      {
-        error: "خطای داخلی سرور در پردازش درخواست. لطفاً گزارش خطا را در Cloudflare بررسی کنید.",
-      },
-      500,
-      origin
-    );
+    return jsonResponse({
+      error: "پردازش درخواست ناموفق بود. اتصال‌ها و گزارش خطای Cloudflare را بررسی کنید.",
+    }, 500, origin);
   }
 }
