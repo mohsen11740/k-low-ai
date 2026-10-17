@@ -1,4 +1,4 @@
-// functions/api/legal-deraft.js
+// functions/api/legal-draft.js
 
 export async function onRequestPost(context) {
   const { request, env } = context;
