@@ -166,9 +166,12 @@ a{color:inherit}
 .saved-item p{font-size:12px;color:var(--muted);margin:7px 0}
 .saved-item button{width:auto;display:inline-block;padding:8px 12px;margin:5px 4px 0 0;font-size:12px}
 .footer{
- text-align:center;color:#777;font-size:12px;line-height:2;
- margin-top:22px;padding:14px 8px;border-top:1px solid var(--line)
+ display:flex;align-items:center;justify-content:space-between;gap:8px;
+ text-align:center;color:#858585;font-size:10px;line-height:1.8;
+ margin-top:22px;padding:12px 5px;border-top:1px solid var(--line)
 }
+.footer .owner{flex:1;text-align:center}
+.footer .designer{white-space:nowrap;text-align:left;color:#858585;font-size:10px}
 button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
  outline:2px solid #c5a45e;outline-offset:2px
 }
@@ -180,6 +183,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
  .welcome h2{font-size:25px}
  .content{padding-left:11px;padding-right:11px}
  .tile{padding:12px 10px}
+ .footer{font-size:9px}
+ .footer .designer{font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 </style>
@@ -217,7 +222,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 'use strict';
 
 const PHONE='09335770175';
-const OWNER='حقوق این نرم‌افزار متعلق به خانم نسرین کربلایی می‌باشد.';
+const OWNER='حقوق این سایت متعلق به خانم نسرین کربلایی می‌باشد';
+const DESIGNER='طراح: محسن عبدی';
 const DEFAULT_ENDPOINT='/api/legal-draft';
 const services=[
  {id:'consult',icon:'⚖',name:'مشاوره حقوقی',desc:'تحلیل مسئله و راهنمایی حقوقی'},
@@ -230,7 +236,7 @@ const services=[
  {id:'request',icon:'☎',name:'درخواست مشاوره و وکالت',desc:'ثبت پیش‌نویس درخواست و تماس مستقیم'}
 ];
 
-let tab='home',current=null;
+let tab='home',current=null,currentFormData={};
 const main=document.getElementById('main');
 
 function getSaved(){
@@ -249,14 +255,33 @@ function escapeHtml(value){
  }[c]));
 }
 function footerHtml(){
- return `<div class="footer legal-footer">${OWNER}</div>`;
-}
-function addFooter(){
- if(!main.querySelector('.legal-footer'))main.insertAdjacentHTML('beforeend',footerHtml());
+ return `<div class="footer legal-footer">
+ <span class="owner">${escapeHtml(OWNER)}</span>
+ <span class="designer">${escapeHtml(DESIGNER)}</span>
+ </div>`;
 }
 function getAiEndpoint(){
  try{return localStorage.getItem('karloAiEndpoint')||DEFAULT_ENDPOINT}
  catch(e){return DEFAULT_ENDPOINT}
+}
+
+/* نشانه‌های قالب‌بندی Markdown را حذف می‌کند، نه متن حقوقی را. */
+function cleanFinalText(value){
+ return String(value??'')
+  .replace(/```[a-z]*\s*/gi,'')
+  .replace(/```/g,'')
+  .replace(/\r\n?/g,'\n')
+  .replace(/^\s{0,3}#{1,6}\s*/gm,'')
+  .replace(/\*\*(.*?)\*\*/gs,'$1')
+  .replace(/__(.*?)__/gs,'$1')
+  .replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g,'$1')
+  .replace(/(?<!_)_([^_\n]+)_(?!_)/g,'$1')
+  .replace(/^\s*[-*•]\s+/gm,'')
+  .replace(/^\s*>\s?/gm,'')
+  .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,'$1')
+  .replace(/[ \t]+\n/g,'\n')
+  .replace(/\n{3,}/g,'\n\n')
+  .trim();
 }
 function home(){
  main.innerHTML=`
@@ -392,7 +417,7 @@ function generateTemplate(id,fd){
  const d=Object.fromEntries(fd.entries());
  let text='';
  if(id==='request'){
-  text=`درخواست مشاوره و وکالت | پیش‌نویس
+  text=`درخواست مشاوره و وکالت
 
 نام متقاضی: ${d.name||'—'}
 شماره تماس متقاضی: ${d.phone||'—'}
@@ -404,7 +429,7 @@ ${d.story||'—'}
 
 شماره تماس حقوق کربلایی: ۰۹۳۳۵۷۷۰۱۷۵
 
-توجه: این فرم در نسخه فعلی روی دستگاه ذخیره می‌شود و برای دفتر ارسال نشده است.`;
+این فرم در نسخه فعلی روی دستگاه ذخیره می‌شود و برای دفتر ارسال نشده است.`;
  }else if(id==='consult'){
   text=`خلاصه مسئله برای مشاوره حقوقی
 
@@ -451,7 +476,7 @@ ${d.date?'خواهشمند است تا تاریخ '+d.date+' نسبت به مو�
 
 نام و امضا: ${d.sender||'—'}
 
-توجه: مبنای قانونی، مهلت و آثار اظهارنامه باید با توجه به موضوع و مدارک بررسی شود.`;
+مبنای قانونی، مهلت و آثار اظهارنامه باید با توجه به موضوع و مدارک بررسی شود.`;
  }else if(id==='petition'){
   text=`پیش‌نویس دادخواست برای بازبینی
 
@@ -524,21 +549,6 @@ ${d.evidence||'مستندات درج شود.'}
 
 این پیش‌نویس باید با محتویات پرونده و قوانین قابل اعمال تطبیق داده شود.`;
  }
- const out=document.getElementById('output');
- out.innerHTML=`
- <div class="panel">
-  <h3>پیش‌نویس شما</h3>
-  <p class="hint">متن را بررسی کنید. پاسخ هوش مصنوعی، در صورت دریافت، جایگزین متن زیر می‌شود.</p>
-  <div id="aiStatus" class="status" role="status" aria-live="polite">در حال آماده‌سازی پیش‌نویس…</div>
-  <div class="field"><label for="draftText">متن قابل ویرایش</label>
-  <textarea id="draftText" dir="rtl" style="min-height:320px;line-height:2.2">${escapeHtml(text)}</textarea></div>
-  <button class="btn" type="button" onclick="saveDraft()">ذخیره پیش‌نویس</button>
-  <button class="btn ghost" type="button" onclick="copyDraft()">کپی متن</button>
-  <button class="btn ghost" type="button" onclick="printDraft()">چاپ / ذخیره PDF</button>
-  <div id="legalSources"></div>
-  <div id="legalDisclaimer" class="notice">این متن پیش‌نویس است. اطلاعات، استنادهای قانونی، صلاحیت مرجع و مهلت‌ها را قبل از استفاده بررسی کنید.</div>
- </div>`;
- out.scrollIntoView({behavior:'smooth',block:'start'});
  return {text,d};
 }
 
@@ -560,22 +570,50 @@ function renderSources(sources,found){
  </div>`;
 }
 
-async function generate(id,fd){
- const generated=generateTemplate(id,fd);
- if(!generated)return;
- const d=generated.d;
- const area=document.getElementById('draftText');
+function setResultStatus(message,isGood=false){
  const status=document.getElementById('aiStatus');
- const endpoint=getAiEndpoint();
- if(!endpoint){
-  if(status)status.textContent='اتصال هوش مصنوعی تنظیم نشده است؛ پیش‌نویس محلی آماده است.';
-  return;
+ if(!status)return;
+ status.className=isGood?'ai-badge':'status';
+ status.textContent=message;
+}
+
+function setRevisionBusy(isBusy){
+ const btn=document.getElementById('reviseButton');
+ if(btn){
+  btn.disabled=isBusy;
+  btn.textContent=isBusy?'در حال اعمال اصلاحات…':'اعمال اصلاحات و بازنویسی';
  }
- if(status)status.textContent='در حال نگارش متن حرفه‌ای و بررسی منابع قانونی…';
- const submit=document.querySelector('#entry button[type="submit"]');
- if(submit){submit.disabled=true;submit.textContent='در حال تهیه پیش‌نویس…';}
- try{
-  const prompt=`نقش تو دستیار تخصصی نگارش و تحلیل حقوقی ایران است. پاسخ را به فارسی روان، دقیق، رسمی، حرفه‌ای و متناسب با نوع خدمت بنویس.
+}
+
+function showOutput(initialText){
+ const out=document.getElementById('output');
+ out.innerHTML=`
+ <div class="panel">
+  <h3>پیش‌نویس شما</h3>
+  <p class="hint">متن اولیه در کادر پایین آماده می‌شود. می‌توانید اصلاحات خود را جداگانه بنویسید و نسخه کامل را دوباره تولید کنید.</p>
+  <div id="aiStatus" class="status" role="status" aria-live="polite">در حال آماده‌سازی پیش‌نویس…</div>
+
+  <div class="field">
+   <label for="correctionNotes">اصلاحات، اطلاعات تکمیلی و نکات موردنظر شما</label>
+   <textarea id="correctionNotes" dir="rtl" style="min-height:130px" placeholder="مثلاً: این تاریخ را اصلاح کن، ماده قانونی مرتبط را بررسی کن، توضیح زیر را اضافه کن، متن رسمی‌تر و کامل‌تر شود..."></textarea>
+  </div>
+  <button id="reviseButton" class="btn gold" type="button" onclick="reviseDraft()">اعمال اصلاحات و بازنویسی</button>
+
+  <div class="field" style="margin-top:20px">
+   <label for="finalText">متن نهایی کامل</label>
+   <textarea id="finalText" dir="rtl" style="min-height:360px;line-height:2.2" placeholder="متن کامل نهایی اینجا نمایش داده می‌شود.">${escapeHtml(cleanFinalText(initialText))}</textarea>
+  </div>
+  <button class="btn" type="button" onclick="saveDraft()">ذخیره متن نهایی</button>
+  <button class="btn ghost" type="button" onclick="copyDraft()">کپی متن نهایی</button>
+  <button class="btn ghost" type="button" onclick="printDraft()">چاپ / ذخیره PDF</button>
+  <div id="legalSources"></div>
+  <div id="legalDisclaimer" class="notice">متن پیش‌نویس است. اطلاعات، استنادهای قانونی، صلاحیت مرجع و مهلت‌ها را پیش از استفاده بررسی کنید.</div>
+ </div>`;
+ out.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function buildPrompt(id,d,baseText,correctionNotes=''){
+ return `نقش تو دستیار تخصصی نگارش و تحلیل حقوقی ایران است. پاسخ را به فارسی روان، دقیق، رسمی، حرفه‌ای و متناسب با نوع خدمت بنویس.
 
 قواعد الزامی:
 ۱. اطلاعات کاربر را دقیق بخوان و متن نهایی را متناسب با همان پرونده بنویس؛ از پاسخ عمومی و کلیشه‌ای خودداری کن.
@@ -583,73 +621,136 @@ async function generate(id,fd){
 ۳. برای هر استناد، نام قانون، شماره ماده و توضیح ارتباط ماده با موضوع را بنویس. شماره ماده، عنوان قانون، رأی وحدت رویه، مهلت یا نقل‌قول قانونی را حدس نزن و جعل نکن.
 ۴. اگر منبع معتبر یا متن ماده در دسترس نیست، صریح بگو «نیازمند بررسی منبع قانونی» و به‌جای ساختن استناد، تحلیل را بدون شماره ماده ادامه بده.
 ۵. بین متن قانون، برداشت حقوقی و اطلاعاتی که کاربر ادعا کرده تفاوت بگذار.
-۶. هیچ واقعیت، تاریخ، مبلغ، مدرک، نام شخص یا توافقی را که کاربر نداده است، اضافه نکن. موارد ناقص را با [نیازمند تکمیل] مشخص کن.
-۷. برای مشاوره: مسئله حقوقی، تحلیل، مستند قانونیِ قابل احراز، گزینه‌های اقدام، ریسک‌ها و مدارک لازم را توضیح بده.
+۶. هیچ واقعیت، تاریخ، مبلغ، مدرک، نام شخص یا توافقی را که کاربر نداده است، اضافه نکن. موارد ناقص را با عبارت «نیازمند تکمیل» مشخص کن.
+۷. برای مشاوره: مسئله حقوقی، تحلیل، مستند قانونی قابل احراز، گزینه‌های اقدام، ریسک‌ها و مدارک لازم را توضیح بده.
 ۸. برای اظهارنامه، دادخواست، شکواییه و لایحه: متن رسمی و آماده بازبینی بنویس؛ خواسته، شرح، دلایل و نتیجه مورد تقاضا را متناسب با فرم تنظیم کن.
 ۹. برای نامه اداری: عنوان، مخاطب، موضوع، متن محترمانه، درخواست روشن و فهرست پیوست‌ها را رعایت کن.
 ۱۰. از تکرار مطالب، مقدمه‌های طولانی، توصیه‌های بی‌ربط و چند بار نوشتن یک نتیجه خودداری کن.
-۱۱. پاسخ را با تیترهای روشن و پاراگراف‌های منظم ارائه بده. متن اصلی را کامل بنویس، نه اینکه فقط بگویی کاربر چه چیزهایی بنویسد.
-۱۲. اگر برای نتیجه‌گیری اطلاعات حیاتی کم است، متن قابل استفاده را تهیه کن و در انتها موارد لازم برای تکمیل را کوتاه فهرست کن.
-۱۳. قانون قابل اعمال ایران را در اولویت قرار بده، مگر اینکه کاربر حوزه قضایی دیگری را مشخص کرده باشد.
-۱۴. در پایان، فقط یک یادآوری کوتاه برای بررسی متن پیش از ثبت یا ارسال بیاور.
+۱۱. متن را کامل و یکپارچه بنویس، نه اینکه فقط بگویی کاربر چه چیزهایی بنویسد.
+۱۲. خروجی نهایی باید متن آماده استفاده باشد. از ستاره، دو ستاره، هشتگ، علامت بولت، کد Markdown و توضیحات خارج از متن اصلی استفاده نکن. تیترهای ساده و پاراگراف‌های مرتب مجازند.
+۱۳. اگر برای نتیجه‌گیری اطلاعات حیاتی کم است، متن قابل استفاده را تهیه کن و در انتها موارد لازم برای تکمیل را کوتاه فهرست کن.
+۱۴. قانون قابل اعمال ایران را در اولویت قرار بده، مگر اینکه کاربر حوزه قضایی دیگری را مشخص کرده باشد.
+۱۵. در پایان متن اسناد، توضیحات غیرضروری درباره فرایند تولید را اضافه نکن. یادآوری کوتاه بررسی متن پیش از ثبت یا ارسال کافی است.
+۱۶. در بازنویسی، متن قبلی را با اصلاحات کاربر تلفیق کن و یک نسخه کامل و نهایی تحویل بده؛ فقط فهرست اصلاحات را برنگردان.
 
 نوع خدمت: ${config[id]?.title||id}
+
 اطلاعات ثبت‌شده توسط کاربر:
 ${JSON.stringify(d)}
-متن اولیه برای بازنویسی:
-${generated.text}`;
 
-  const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),60000);
-  let response;
-  try{
-   response=await fetch(endpoint,{
-    method:'POST',
-    headers:{'Content-Type':'application/json','Accept':'application/json'},
-    body:JSON.stringify({
-     message:prompt,
-     task:id,
-     form:d,
-     context:{
-      app:'k-low | حقوق کربلایی',
-      language:'fa-IR',
-      jurisdiction:'ایران',
-      output_format:'legal_draft',
-      require_legal_citations:true,
-      do_not_fabricate_law:true
-     }
-    }),
-    signal:controller.signal
-   });
-  }finally{clearTimeout(timeout)}
+متن اولیه:
+${baseText}
+
+اصلاحات و اطلاعات تکمیلی که باید اعمال شوند:
+${correctionNotes||'اصلاح اضافه‌ای ثبت نشده است. متن را کامل و حرفه‌ای بازنویسی کن.'}
+
+فقط متن نهایی را برگردان.`;
+}
+
+async function requestAi(id,d,baseText,correctionNotes=''){
+ const endpoint=getAiEndpoint();
+ const prompt=buildPrompt(id,d,baseText,correctionNotes);
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),60000);
+ try{
+  const response=await fetch(endpoint,{
+   method:'POST',
+   headers:{'Content-Type':'application/json','Accept':'application/json'},
+   body:JSON.stringify({
+    message:prompt,
+    task:id,
+    form:{...d,correction_notes:correctionNotes,previous_draft:baseText},
+    context:{
+     app:'k-low | حقوق کربلایی',
+     language:'fa-IR',
+     jurisdiction:'ایران',
+     output_format:'plain_legal_draft',
+     require_legal_citations:true,
+     do_not_fabricate_law:true,
+     revision:!!correctionNotes
+    }
+   }),
+   signal:controller.signal
+  });
   if(!response.ok)throw new Error('HTTP '+response.status);
   const result=await response.json();
   const answer=result.text||result.answer||result.response||result.output;
   if(typeof answer!=='string'||!answer.trim())throw new Error('EMPTY_RESPONSE');
-  if(area)area.value=answer.trim();
-  if(status){
-   status.className='ai-badge';
-   status.textContent='پیش‌نویس با کمک هوش مصنوعی آماده شد';
-  }
-  renderSources(result.sources,result.legal_sources_found);
+  return {text:cleanFinalText(answer),sources:result.sources,found:result.legal_sources_found};
+ }finally{
+  clearTimeout(timeout);
+ }
+}
+
+async function generate(id,fd){
+ const generated=generateTemplate(id,fd);
+ if(!generated)return;
+ current=id;
+ currentFormData=generated.d;
+ showOutput(generated.text);
+ setResultStatus('در حال نگارش متن حرفه‌ای و بررسی منابع قانونی…');
+ const submit=document.querySelector('#entry button[type="submit"]');
+ if(submit){submit.disabled=true;submit.textContent='در حال تهیه پیش‌نویس…';}
+ try{
+  const result=await requestAi(id,currentFormData,generated.text,'');
+  const area=document.getElementById('finalText');
+  if(area)area.value=result.text;
+  setResultStatus('پیش‌نویس با کمک هوش مصنوعی آماده شد',true);
+  renderSources(result.sources,result.found);
   const disclaimer=document.getElementById('legalDisclaimer');
   if(disclaimer){
    disclaimer.textContent='متن با کمک هوش مصنوعی تنظیم شده است. مواد قانونی و منابع نمایش‌داده‌شده را با متن رسمی قوانین تطبیق دهید و پیش از ثبت یا ارسال، متن را بررسی کنید.';
   }
  }catch(error){
-  if(status){
-   status.className='notice';
-   status.textContent=error.name==='AbortError'
-    ?'دریافت پاسخ بیش از زمان مجاز طول کشید. پیش‌نویس اولیه حفظ شده است.'
-    :'پاسخ هوش مصنوعی دریافت نشد؛ پیش‌نویس اولیه حفظ شده است. اتصال سرویس را بررسی کنید.';
-  }
+  setResultStatus(error.name==='AbortError'
+   ?'دریافت پاسخ بیش از زمان مجاز طول کشید. متن اولیه حفظ شده است.'
+   :'پاسخ هوش مصنوعی دریافت نشد؛ متن اولیه حفظ شده است. اتصال سرویس را بررسی کنید.');
  }finally{
   if(submit){submit.disabled=false;submit.textContent='تهیه پیش‌نویس';}
  }
 }
 
+async function reviseDraft(){
+ const area=document.getElementById('finalText');
+ const notesEl=document.getElementById('correctionNotes');
+ if(!area||!notesEl)return;
+ const notes=notesEl.value.trim();
+ if(!notes){
+  alert('ابتدا اصلاحات یا اطلاعات تکمیلی خود را در کادر اول بنویسید.');
+  notesEl.focus();
+  return;
+ }
+ const previous=area.value.trim();
+ if(!previous){
+  alert('ابتدا باید متن اولیه تهیه شود.');
+  return;
+ }
+ setRevisionBusy(true);
+ setResultStatus('اصلاحات شما در حال اعمال است و متن نهایی دوباره نوشته می‌شود…');
+ try{
+  const result=await requestAi(current,currentFormData,previous,notes);
+  area.value=result.text;
+  notesEl.value='';
+  setResultStatus('متن نهایی با اصلاحات شما بازنویسی شد',true);
+  renderSources(result.sources,result.found);
+  const disclaimer=document.getElementById('legalDisclaimer');
+  if(disclaimer){
+   disclaimer.textContent='نسخه بازنویسی‌شده با توجه به اصلاحات شما تهیه شده است. پیش از ثبت یا ارسال، متن و استنادهای قانونی را بررسی کنید.';
+  }
+ }catch(error){
+  setResultStatus(error.name==='AbortError'
+   ?'بازنویسی بیش از زمان مجاز طول کشید. متن قبلی حفظ شده است.'
+   :'بازنویسی انجام نشد؛ متن قبلی حفظ شده است. اتصال سرویس را بررسی کنید.');
+ }finally{
+  setRevisionBusy(false);
+ }
+}
+
+function getFinalArea(){
+ return document.getElementById('finalText')||document.getElementById('draftText');
+}
 function saveDraft(){
- const el=document.getElementById('draftText');
+ const el=getFinalArea();
  if(!el)return;
  const title=config[current]?.title||'پیش‌نویس';
  const arr=getSaved();
@@ -657,10 +758,10 @@ function saveDraft(){
   id:Date.now(),title,content:el.value,
   date:new Date().toLocaleDateString('fa-IR')
  });
- if(setSaved(arr))alert('پیش‌نویس روی همین دستگاه ذخیره شد.');
+ if(setSaved(arr))alert('متن نهایی روی همین دستگاه ذخیره شد.');
 }
 async function copyDraft(){
- const el=document.getElementById('draftText');
+ const el=getFinalArea();
  if(!el)return;
  try{
   if(navigator.clipboard&&window.isSecureContext){
@@ -669,22 +770,22 @@ async function copyDraft(){
    el.focus();el.select();
    if(!document.execCommand('copy'))throw new Error('copy failed');
   }
-  alert('متن کپی شد.');
+  alert('متن نهایی کپی شد.');
  }catch(e){
   el.focus();el.select();
   alert('متن انتخاب شد. اگر کپی نشد، گزینه کپی گوشی را انتخاب کنید.');
  }
 }
 function printDraft(){
- const el=document.getElementById('draftText');
+ const el=getFinalArea();
  if(!el)return;
  const w=window.open('','_blank');
  if(!w){alert('برای چاپ، اجازه بازشدن پنجره را بدهید.');return;}
- const text=escapeHtml(el.value);
+ const text=escapeHtml(cleanFinalText(el.value));
  w.document.open();
  w.document.write(`<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8">
  <meta name="viewport" content="width=device-width,initial-scale=1">
- <title>پیش‌نویس حقوقی</title>
+ <title>متن نهایی حقوقی</title>
  <style>
  body{font-family:"B Nazanin","BNazanin","Vazirmatn","Noto Naskh Arabic",Tahoma,Arial,sans-serif;
  direction:rtl;text-align:right;padding:25px;line-height:2.2;font-size:16px;color:#172033}
@@ -701,7 +802,7 @@ function saved(){
  <div class="saved-item"><b>${escapeHtml(x.title)}</b><p>${escapeHtml(x.date)}</p>
  <button class="btn ghost" onclick="viewSaved(${Number(x.id)})">مشاهده</button>
  <button class="btn ghost" onclick="deleteSaved(${Number(x.id)})">حذف</button></div>
- `).join(''):`<div class="empty">هنوز پیش‌نویسی ذخیره نکرده‌اید.<br>پس از تهیه متن، روی «ذخیره پیش‌نویس» بزنید.</div>`}
+ `).join(''):`<div class="empty">هنوز پیش‌نویسی ذخیره نکرده‌اید.<br>پس از تهیه متن، روی «ذخیره متن نهایی» بزنید.</div>`}
  ${footerHtml()}`;
 }
 function viewSaved(id){
@@ -710,8 +811,8 @@ function viewSaved(id){
  current=null;
  main.innerHTML=`<button class="back" onclick="saved()">← بازگشت</button>
  <div class="panel"><h3>${escapeHtml(x.title)}</h3>
- <div class="field"><label for="draftText">متن قابل ویرایش</label>
- <textarea id="draftText" dir="rtl" style="min-height:400px;line-height:2.2">${escapeHtml(x.content)}</textarea></div>
+ <div class="field"><label for="finalText">متن نهایی قابل ویرایش</label>
+ <textarea id="finalText" dir="rtl" style="min-height:400px;line-height:2.2">${escapeHtml(x.content)}</textarea></div>
  <button class="btn" onclick="copyDraft()">کپی متن</button>
  <button class="btn ghost" onclick="printDraft()">چاپ / ذخیره PDF</button></div>${footerHtml()}`;
 }
@@ -794,7 +895,7 @@ function about(){
  <p class="hint">دستیار حقوقی و تنظیم پیش‌نویس اسناد</p>
  <p class="hint">مشاوره اولیه، تنظیم پیش‌نویس و راهنمای آماده‌سازی مدارک در یک برنامه فارسی.</p>
  <a class="btn" href="tel:${PHONE}">مشاوره با خانم کربلایی: ۰۹۳۳۵۷۷۰۱۷۵</a>
- <div class="notice" style="text-align:right">${OWNER}<br>
+ <div class="notice" style="text-align:right">${escapeHtml(OWNER)}<br>
  این برنامه جایگزین بررسی تخصصی پرونده یا سامانه رسمی قضایی نیست. اطلاعات پرونده را محرمانه نگه دارید.</div>
  <p class="footer">نسخه ۰.۳</p></div>${footerHtml()}`;
 }
