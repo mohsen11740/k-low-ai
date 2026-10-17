@@ -1,0 +1,14 @@
+{
+  "id": "/",
+  "name": "حقوق کربلایی | k-low",
+  "short_name": "k-low",
+  "description": "دستیار حقوقی حقوق کربلایی و تقویم یادآور پرونده‌ها",
+  "lang": "fa-IR",
+  "dir": "rtl",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f7f2e8",
+  "theme_color": "#0b1422",
+  "icons": [{"src":"/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
