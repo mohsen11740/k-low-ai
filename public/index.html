@@ -1,41 +1,413 @@
-<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#0b1422"><title>حقوق کربلایی | دستیار حقوقی</title><style>
-:root{--navy:#0b1422;--navy2:#14243a;--gold:#d9b66f;--cream:#f7f2e8;--ink:#172033;--muted:#738093;--line:#e5dfd3}*{box-sizing:border-box}body{margin:0;background:#f4f0e8;color:var(--ink);font-family:Tahoma,"Vazirmatn",Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}.app{max-width:520px;margin:auto;min-height:100vh;background:var(--cream);box-shadow:0 0 40px #0001}.top{background:linear-gradient(135deg,#0b1422,#1b2b40);color:#fff;padding:23px 20px 25px;border-radius:0 0 26px 26px;position:relative;overflow:hidden}.top:after{content:'⚖';position:absolute;left:14px;top:15px;font-size:82px;color:#d9b66f16}.brand{display:flex;align-items:center;gap:12px;position:relative;flex-wrap:wrap}.mark{width:49px;height:49px;border:1.5px solid var(--gold);border-radius:16px;display:grid;place-items:center;color:var(--gold);font-size:27px;font-weight:bold}.top-call{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:var(--gold);color:#172033;padding:9px 10px;border-radius:11px;font-size:10px;font-weight:bold;white-space:nowrap;position:relative;z-index:2}.brand h1{margin:0;font-size:21px;letter-spacing:.2px}.brand p{margin:5px 0 0;color:#c7d0dd;font-size:11px}.welcome{margin-top:25px;position:relative}.welcome small{color:var(--gold)}.welcome h2{font-size:22px;line-height:1.65;margin:8px 0}.welcome p{font-size:12px;color:#c6cfdb;line-height:1.9;margin:0}.content{padding:18px 16px 90px}.section-title{display:flex;align-items:center;justify-content:space-between;margin:8px 2px 13px}.section-title h3{margin:0;font-size:16px}.section-title span{font-size:11px;color:var(--muted)}.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.tile{background:#fff;border:1px solid var(--line);border-radius:17px;padding:15px 13px;min-height:126px;text-align:right;box-shadow:0 5px 14px #1b2b4008;color:var(--ink)}.tile:active{transform:scale(.98)}.ico{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:#f7f0df;color:#9c762e;font-size:21px;margin-bottom:12px}.tile b{display:block;font-size:13px}.tile small{display:block;color:var(--muted);font-size:10px;line-height:1.7;margin-top:6px}.wide{margin-top:16px;border-radius:17px;padding:16px;background:linear-gradient(115deg,#17283e,#0b1422);color:white;display:flex;align-items:center;gap:13px}.wide .ico{flex-shrink:0;margin:0;background:#d9b66f20;color:var(--gold)}.wide b{font-size:13px}.wide p{font-size:11px;line-height:1.8;color:#cbd4e0;margin:5px 0 0}.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:17px;margin-top:12px}.panel h3{margin:0 0 6px;font-size:17px}.hint{font-size:11px;color:var(--muted);line-height:1.9;margin:0 0 15px}.field{margin:13px 0}.field label{display:block;font-size:12px;font-weight:bold;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;border:1px solid #ddd6c9;border-radius:11px;background:#fff;padding:12px;color:#172033;outline:none;font-size:13px}.field textarea{min-height:100px;resize:vertical;line-height:1.9}.field input:focus,.field textarea:focus,.field select:focus{border-color:#c5a45e;box-shadow:0 0 0 3px #d9b66f20}.btn{border:0;border-radius:12px;padding:13px 16px;background:var(--navy);color:white;font-weight:bold;font-size:13px;width:100%;margin-top:7px}.btn.gold{background:var(--gold);color:#1b2432}.btn.ghost{background:#f4efe5;color:#293448;border:1px solid var(--line)}.back{border:0;background:transparent;color:var(--gold);font-size:13px;padding:0 0 17px}.result{background:#fffdf8;border:1px solid #d8c79e;border-radius:14px;padding:14px;white-space:pre-wrap;line-height:2;font-size:13px;min-height:120px;overflow-wrap:anywhere}.notice{font-size:10px;color:#776642;line-height:1.9;background:#faf3df;border-radius:11px;padding:11px;margin-top:12px}.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);display:flex;justify-content:space-around;background:#0b1422;color:#aeb8c7;padding:11px 5px calc(11px + env(safe-area-inset-bottom));z-index:5;border-radius:17px 17px 0 0}.bottom button{border:0;background:none;color:inherit;font-size:10px;display:flex;flex-direction:column;gap:5px;align-items:center}.bottom button span{font-size:18px}.bottom button.active{color:var(--gold)}.empty{text-align:center;color:var(--muted);font-size:12px;padding:24px 5px;line-height:2}.saved-item{border:1px solid var(--line);border-radius:13px;padding:13px;margin:9px 0;background:#fff}.saved-item b{font-size:13px}.saved-item p{font-size:11px;color:var(--muted);margin:7px 0}.saved-item button{width:auto;padding:8px 12px;margin-left:5px;font-size:11px}.footer{text-align:center;color:#777;font-size:10px;line-height:1.9;margin-top:22px;padding:14px 8px;border-top:1px solid var(--line)}.ai-badge{display:inline-block;background:#e8f2e9;color:#25613a;padding:4px 8px;border-radius:20px;font-size:10px;margin-bottom:8px}.busy{opacity:.7;pointer-events:none}
-</style></head><body><div class="app"><header class="top"><div class="brand"><div class="mark">K</div><div><h1>حقوق کربلایی <span style="color:#d9b66f">KARBALAEI LAW</span></h1><p>دستیار حقوقی و تنظیم اسناد</p></div><a class="top-call" href="tel:09335770175">☎ مشاوره با خانم کربلایی</a></div><div class="welcome"><small>همراه شما در مسیر آگاهی حقوقی</small><h2>حقوق خود را بشناسید.<br>آگاهانه‌تر تصمیم بگیرید.</h2><p>مشاوره، تنظیم پیش‌نویس اسناد و درخواست ارتباط با دفتر حقوقی، در یک فضای یکپارچه.</p></div></header><main id="main" class="content"></main><nav class="bottom"><button class="active" data-tab="home"><span>⌂</span>خانه</button><button data-tab="saved"><span>▤</span>پیش‌نویس‌ها</button><button data-tab="guide"><span>✧</span>راهنما</button><button data-tab="about"><span>ⓘ</span>درباره</button></nav></div><script>
-try{localStorage.removeItem('karloAiEndpoint')}catch(e){}
-const services=[{id:'consult',icon:'⚖',name:'مشاوره حقوقی',desc:'شرح مسئله و دریافت راهنمای اولیه'},{id:'notice',icon:'✉',name:'اظهارنامه',desc:'تنظیم پیش‌نویس اظهارنامه'},{id:'petition',icon:'▤',name:'دادخواست',desc:'ثبت خواسته و شرح دادخواست'},{id:'complaint',icon:'⚑',name:'شکواییه',desc:'تنظیم پیش‌نویس شکایت'},{id:'brief',icon:'✎',name:'لایحه',desc:'تدوین دفاعیات و توضیحات'},{id:'tracking',icon:'◷',name:'پیگیری پرونده',desc:'یادداشت تاریخ‌ها و اقدامات'},{id:'request',icon:'☎',name:'درخواست مشاوره و وکالت',desc:'ثبت درخواست و تماس مستقیم'}];let tab='home',current=null;const main=document.getElementById('main');const getSaved=()=>JSON.parse(localStorage.getItem('karloDrafts')||'[]');const setSaved=x=>localStorage.setItem('karloDrafts',JSON.stringify(x));function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function home(){main.innerHTML=`<div class="section-title"><h3>خدمات حقوقی</h3><span>انتخاب کنید و شروع کنید</span></div><div class="tiles">${services.map(s=>`<button class="tile" onclick="openService('${s.id}')"><div class="ico">${s.icon}</div><b>${s.name}</b><small>${s.desc}</small></button>`).join('')}</div><button class="wide" style="width:100%;border:0;text-align:right" onclick="openService('request')"><div class="ico">☎</div><div><b>درخواست مشاوره و وکالت</b><p>شرح درخواست را ثبت کنید یا مستقیماً با شماره ۰۹۳۳۵۷۷۰۱۷۵ تماس بگیرید.</p></div></button><div class="footer">حقوق این سایت متعلق به خانم نسرین کربلایی می‌باشد.<br><span style="float:right">طراح: محسن عبدی</span></div>`}
-const config={request:{title:'درخواست مشاوره و وکالت',intro:'اطلاعات تماس و خلاصه درخواست را وارد کنید. برای پیگیری سریع‌تر می‌توانید مستقیماً با شماره ۰۹۳۳۵۷۷۰۱۷۵ تماس بگیرید. ارسال این فرم در نسخه فعلی فقط پیش‌نویس را روی دستگاه نگه می‌دارد و به دفتر ارسال نمی‌کند.',fields:[['name','نام و نام خانوادگی','text','نام شما'],['phone','شماره تماس شما','text','شماره‌ای برای تماس'],['service','نوع درخواست','select','مشاوره حقوقی|درخواست قبول وکالت|تنظیم سند حقوقی|پیگیری درخواست قبلی'],['topic','موضوع پرونده','text','مثلاً خانواده، ملکی، قرارداد، کیفری'],['story','شرح کوتاه درخواست','textarea','خلاصه موضوع، مهلت مهم و کمکی که نیاز دارید']]},consult:{title:'مشاوره حقوقی',intro:'مسئله‌تان را با جزئیات بنویسید تا برای بررسی حقوقی و آماده‌شدن برای مشاوره، نکات اصلی را مرتب کنیم.',fields:[['topic','موضوع یا حوزه مسئله','text','مثلاً قرارداد، خانواده، ملک، کار'],['story','شرح ماجرا','textarea','چه اتفاقی افتاده؟ تاریخ‌ها و اشخاص مرتبط را بنویسید.'],['goal','نتیجه‌ای که می‌خواهید','textarea','می‌خواهید به چه نتیجه‌ای برسید؟'],['city','شهر محل رسیدگی','text','مثلاً تهران یا کرج']]},notice:{title:'تنظیم اظهارنامه',intro:'اطلاعات را وارد کنید. متن زیر یک پیش‌نویس اولیه است و باید پیش از ارسال بررسی شود.',fields:[['sender','نام اظهارکننده','text','نام و نام خانوادگی'],['receiver','نام مخاطب','text','نام و نام خانوادگی یا شخص حقوقی'],['subject','موضوع اظهارنامه','text','مثلاً مطالبه وجه یا ایفای تعهد'],['story','شرح موضوع و خواسته','textarea','شرح دقیق، تاریخ‌ها، مبلغ و مهلت موردنظر'],['date','تاریخ یا مهلت پاسخ','text','در صورت نیاز']]},petition:{title:'تنظیم دادخواست',intro:'خواسته و شرح ادعا را وارد کنید تا یک پیش‌نویس منظم برای بازبینی تهیه شود.',fields:[['plaintiff','خواهان','text','نام و نام خانوادگی'],['defendant','خوانده','text','نام و نام خانوادگی یا شخص حقوقی'],['claim','خواسته','text','خواسته دقیق شما'],['value','بهای خواسته (در صورت نیاز)','text','مبلغ به ریال یا تومان'],['story','شرح دادخواست','textarea','ماجرا، مستندات و آنچه از دادگاه می‌خواهید'],['evidence','دلایل و پیوست‌ها','textarea','قرارداد، رسید، پیامک، شهادت و...']]},complaint:{title:'تنظیم شکواییه',intro:'شرح واقعه و اطلاعات مربوط را بنویسید. عنوان مجرمانه نهایی باید با توجه به جزئیات و قانون بررسی شود.',fields:[['complainant','شاکی','text','نام و نام خانوادگی'],['accused','مشتکی‌عنه','text','نام شخص یا در صورت نامشخص بودن، توضیح'],['subject','موضوع شکایت','text','شرح کوتاه واقعه'],['story','شرح واقعه','textarea','زمان، مکان، نحوه وقوع و افراد حاضر'],['evidence','دلایل و مدارک','textarea','مدارک، شاهدان و مستندات موجود']]},brief:{title:'تنظیم لایحه',intro:'برای تنظیم پیش‌نویس دفاعیه، مرجع رسیدگی و نکات اصلی پرونده را وارد کنید.',fields:[['court','مرجع رسیدگی / شعبه','text','مثلاً شعبه ... دادگاه ...'],['case','شماره پرونده (اختیاری)','text','شماره پرونده یا بایگانی'],['role','سمت شما در پرونده','select','خواهان|خوانده|شاکی|متهم|تجدیدنظرخواه|تجدیدنظرخوانده'],['story','خلاصه پرونده و دفاعیات','textarea','موضوع پرونده و پاسخ شما به ادعاها'],['evidence','دلایل و مستندات','textarea','اسناد و نکات حقوقی مهم']]},tracking:{title:'یادداشت پیگیری پرونده',intro:'اطلاعات را برای یادآوری و نظم شخصی ذخیره کنید. این بخش به سامانه قضایی متصل نیست.',fields:[['case','عنوان یا شماره پرونده','text','نام کوتاه یا شماره پرونده'],['date','تاریخ مهم','text','مثلاً ۱۴۰۵/۰۸/۲۰'],['action','اقدام بعدی','textarea','چه کاری باید انجام دهید؟'],['notes','یادداشت','textarea','توضیحات تکمیلی']]}};
-function openService(id){current=id;const c=config[id];if(!c){return}main.innerHTML=`<button class="back" onclick="goHome()">← بازگشت به خانه</button><div class="panel"><h3>${c.title}</h3><p class="hint">${c.intro}</p><form id="entry">${c.fields.map(f=>`<div class="field"><label>${f[1]}</label>${f[2]==='textarea'?`<textarea name="${f[0]}" placeholder="${f[3]}" required="${['story'].includes(f[0])}"></textarea>`:f[2]==='select'?`<select name="${f[0]}">${f[3].split('|').map(o=>`<option>${o}</option>`).join('')}</select>`:`<input name="${f[0]}" type="text" placeholder="${f[3]}" ${['topic','sender','receiver','claim','complainant','court'].includes(f[0])?'required':''}>`}</div>`).join('')}<button class="btn gold" type="submit">تهیه پیش‌نویس</button></form></div><div id="output"></div>`;document.getElementById('entry').addEventListener('submit',e=>{e.preventDefault();generate(id,new FormData(e.target))})}
-function generateTemplate(id,fd){const c=config[id],d=Object.fromEntries(fd.entries());let text='';if(id==='request'){text=`درخواست مشاوره و وکالت | پیش‌نویس
-نام: ${d.name||'—'}
-شماره تماس متقاضی: ${d.phone||'—'}
-نوع درخواست: ${d.service||'—'}
-موضوع پرونده: ${d.topic||'—'}
 
-شرح درخواست:
-${d.story||'—'}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#0b1422">
+<title>k-low | مشاوره حقوقی خانم کربلایی</title>
+<style>
+:root{--navy:#0b1422;--navy2:#182a40;--gold:#d9b66f;--cream:#f7f2e8;--ink:#192437;--muted:#788395;--line:#e5dfd3;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:#eee9df;color:var(--ink);font-family:"Vazirmatn","IRANSans","B Nazanin","B Nazanin Web",Tahoma,sans-serif}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:540px;min-height:100vh;margin:auto;background:var(--cream);box-shadow:0 0 36px #0001}
+.top{background:linear-gradient(135deg,#091321,#1b2e45);color:white;padding:22px 18px 25px;border-radius:0 0 27px 27px;position:relative;overflow:hidden}
+.top:after{content:"⚖";position:absolute;left:12px;top:12px;font-size:95px;color:#d9b66f15;pointer-events:none}
+.brand{display:flex;align-items:center;gap:11px;position:relative;z-index:1;flex-wrap:wrap}
+.mark{width:53px;height:53px;flex:none;border:1.5px solid var(--gold);border-radius:16px;display:grid;place-items:center;color:var(--gold);font-size:30px;font-weight:bold}
+.brand h1{font-size:21px;margin:0;letter-spacing:.2px}
+.brand p{font-size:12px;color:#c9d2df;margin:5px 0 0}
+.top-call{margin-right:auto;text-decoration:none;background:var(--gold);color:#172033;border-radius:12px;padding:10px 12px;font-size:11px;font-weight:bold;white-space:nowrap}
+.welcome{position:relative;margin-top:24px}
+.welcome small{color:var(--gold);font-size:12px}
+.welcome h2{font-size:23px;line-height:1.8;margin:8px 0}
+.welcome p{font-size:12px;line-height:2;color:#d1d8e2;margin:0}
+.content{padding:18px 15px 100px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 2px 13px}
+.section-title h3{margin:0;font-size:17px}
+.section-title span{font-size:11px;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.tile{min-height:132px;background:white;border:1px solid var(--line);border-radius:18px;padding:15px 13px;text-align:right;color:var(--ink);box-shadow:0 5px 15px #1b2b4008}
+.tile:active{transform:scale(.985)}
+.ico{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#f7f0df;color:#98712b;font-size:22px;margin-bottom:12px}
+.tile b{font-size:13px;display:block}
+.tile small{font-size:11px;line-height:1.8;color:var(--muted);display:block;margin-top:6px}
+.panel{background:white;border:1px solid var(--line);border-radius:18px;padding:17px;margin-top:12px}
+.panel h3{font-size:17px;margin:0 0 8px}
+.hint{font-size:12px;line-height:2;color:var(--muted);margin:0 0 14px}
+.field{margin:14px 0}
+.field label{display:block;font-size:12px;font-weight:bold;margin-bottom:7px}
+.field input,.field textarea,.field select{display:block;width:100%;border:1px solid #ddd6c9;border-radius:12px;background:#fff;padding:12px;color:var(--ink);font-size:13px;line-height:2;outline:none}
+.field textarea{min-height:105px;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#c6a258;box-shadow:0 0 0 3px #d9b66f24}
+.btn{display:block;width:100%;border:0;border-radius:12px;padding:13px 15px;background:var(--navy);color:white;font-size:13px;font-weight:bold;margin-top:8px;text-align:center;text-decoration:none}
+.btn.gold{background:var(--gold);color:#172033}
+.btn.ghost{background:#f7f2e8;color:#26344a;border:1px solid var(--line)}
+.btn:disabled{opacity:.6;cursor:wait}
+.back{border:0;background:none;color:#9b782f;font-size:13px;padding:0 0 14px}
+.wide{display:flex;align-items:center;gap:12px;width:100%;margin-top:15px;background:linear-gradient(115deg,#17283e,#0b1422);color:white;border:0;border-radius:17px;padding:16px;text-align:right}
+.wide .ico{flex:none;margin:0;background:#d9b66f20;color:var(--gold)}
+.wide b{font-size:13px}.wide p{font-size:11px;line-height:1.9;color:#d0d7e1;margin:5px 0 0}
+.final-box{background:#fffdf8;border:1px solid #d7c49a;border-radius:14px;padding:12px}
+.final-box textarea{width:100%;min-height:320px;border:0;background:transparent;resize:vertical;outline:none;font-size:13px;line-height:2.2;color:#192437}
+.notes-box{background:#f6f8fb;border:1px solid #dce2eb;border-radius:14px;padding:12px;margin-top:12px}
+.notes-box textarea{width:100%;min-height:100px;border:1px solid #dce2eb;border-radius:10px;padding:11px;line-height:2;font-size:12px}
+.status{font-size:11px;line-height:1.9;color:#52704f;margin-top:10px}
+.notice{font-size:11px;line-height:1.9;color:#76633c;background:#faf3df;border-radius:11px;padding:11px;margin-top:12px}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(540px,100%);display:flex;justify-content:space-around;gap:4px;background:#0b1422;color:#aeb8c7;padding:11px 5px calc(11px + env(safe-area-inset-bottom));z-index:10;border-radius:17px 17px 0 0}
+.bottom button{flex:1;border:0;background:none;color:inherit;font-size:10px;display:flex;flex-direction:column;gap:5px;align-items:center}
+.bottom button span{font-size:19px}.bottom button.active{color:var(--gold)}
+.saved-item{background:white;border:1px solid var(--line);border-radius:14px;padding:13px;margin:10px 0}
+.saved-item b{font-size:13px}.saved-item p{font-size:11px;color:var(--muted);margin:7px 0}
+.saved-actions{display:flex;gap:7px;flex-wrap:wrap}.saved-actions button{width:auto;flex:1;min-width:75px;margin-top:4px}
+.empty{text-align:center;color:var(--muted);font-size:12px;line-height:2.2;padding:24px 8px}
+.footer{border-top:1px solid var(--line);margin-top:22px;padding:13px 6px;color:#777;font-size:10px;line-height:2;text-align:center}
+.footer .designer{display:block;text-align:right}
+.source-list{font-size:11px;line-height:2;overflow-wrap:anywhere}
+@media(max-width:380px){.brand h1{font-size:18px}.top-call{font-size:10px;padding:9px}.content{padding-left:11px;padding-right:11px}.tile{padding:12px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+ <div class="brand">
+  <div class="mark">K</div>
+  <div><h1>k-low</h1><p>مشاوره حقوقی خانم کربلایی</p></div>
+  <a class="top-call" href="tel:09335770175">☎ مشاوره با خانم کربلایی</a>
+ </div>
+ <div class="welcome">
+  <small>همراه شما در مسیر آگاهی حقوقی</small>
+  <h2>حقوق خود را بشناسید.<br>آگاهانه‌تر تصمیم بگیرید.</h2>
+  <p>مشاوره حقوقی و تنظیم پیش‌نویس اسناد، با نگارشی منظم و رسمی.</p>
+ </div>
+</header>
+<main id="main" class="content"></main>
+<nav class="bottom">
+ <button class="active" data-tab="home"><span>⌂</span>خانه</button>
+ <button data-tab="saved"><span>▤</span>پیش‌نویس‌ها</button>
+ <button data-tab="guide"><span>✧</span>راهنما</button>
+ <button data-tab="about"><span>ⓘ</span>درباره</button>
+</nav>
+</div>
+<script>
+"use strict";
+const API="/api/legal-draft";
+const OWNER="حقوق این سایت متعلق به خانم نسرین کربلایی می‌باشد.";
+const DESIGNER="طراح: محسن عبدی";
+const services=[
+{id:"consult",icon:"⚖",name:"مشاوره حقوقی",desc:"شرح مسئله و دریافت راهنمای اولیه"},
+{id:"notice",icon:"✉",name:"اظهارنامه",desc:"تنظیم پیش‌نویس اظهارنامه"},
+{id:"petition",icon:"▤",name:"دادخواست",desc:"تنظیم خواسته و شرح دادخواست"},
+{id:"complaint",icon:"⚑",name:"شکواییه",desc:"تنظیم پیش‌نویس شکایت"},
+{id:"brief",icon:"✎",name:"لایحه",desc:"تنظیم دفاعیات و توضیحات"},
+{id:"adminletter",icon:"▧",name:"نامه یا درخواست اداری",desc:"نگارش رسمی نامه به سازمان‌ها و ادارات"},
+{id:"tracking",icon:"◷",name:"پیگیری پرونده",desc:"یادداشت تاریخ‌ها و اقدامات"},
+{id:"request",icon:"☎",name:"درخواست مشاوره و وکالت",desc:"ثبت محلی درخواست و تماس مستقیم"}
+];
+const config={
+consult:{title:"مشاوره حقوقی",fields:[
+["topic","موضوع مسئله","text","مثلاً خانواده، قرارداد، ملک، کار"],
+["story","شرح کامل ماجرا","textarea","اتفاق‌ها، تاریخ‌ها، اشخاص و مدارک را بنویسید"],
+["goal","نتیجه موردنظر","textarea","چه نتیجه‌ای می‌خواهید؟"],
+["city","شهر محل رسیدگی","text","مثلاً کرج"]]},
+notice:{title:"اظهارنامه",fields:[
+["sender","نام اظهارکننده","text","نام و نام خانوادگی"],
+["receiver","نام مخاطب","text","نام شخص یا شرکت"],
+["subject","موضوع اظهارنامه","text","مثلاً مطالبه وجه"],
+["story","شرح موضوع و خواسته","textarea","شرح دقیق، تاریخ‌ها، مبلغ و تعهد"],
+["deadline","مهلت موردنظر","text","در صورت وجود"]]},
+petition:{title:"دادخواست",fields:[
+["plaintiff","خواهان","text","نام و نام خانوادگی"],
+["defendant","خوانده","text","نام شخص یا شرکت"],
+["claim","خواسته","text","خواسته دقیق"],
+["value","بهای خواسته","text","در صورت نیاز"],
+["story","شرح دادخواست","textarea","شرح ماجرا و مبنای ادعا"],
+["evidence","دلایل و پیوست‌ها","textarea","قرارداد، رسید، پیام، شاهد و..."]]},
+complaint:{title:"شکواییه",fields:[
+["complainant","شاکی","text","نام و نام خانوادگی"],
+["accused","مشتکی‌عنه","text","نام یا مشخصات در دسترس"],
+["subject","موضوع شکایت","text","شرح کوتاه"],
+["story","شرح واقعه","textarea","زمان، مکان، نحوه وقوع و افراد مرتبط"],
+["evidence","دلایل و مدارک","textarea","مدارک و مستندات"]]},
+brief:{title:"لایحه",fields:[
+["court","مرجع رسیدگی و شعبه","text","مثلاً شعبه ... دادگاه ..."],
+["case","شماره پرونده","text","اختیاری"],
+["role","سمت در پرونده","select","خواهان|خوانده|شاکی|متهم|تجدیدنظرخواه|تجدیدنظرخوانده"],
+["story","شرح پرونده و دفاعیات","textarea","ادعاها، پاسخ‌ها و نکات مهم"],
+["evidence","دلایل و مستندات","textarea","اسناد و مدارک"]]},
+adminletter:{title:"نامه یا درخواست اداری",fields:[
+["recipient","مخاطب نامه","text","مثلاً ریاست اداره ..."],
+["sender","نام درخواست‌کننده","text","نام و نام خانوادگی"],
+["subject","موضوع نامه","text","موضوع دقیق درخواست"],
+["story","شرح درخواست","textarea","درخواست، دلایل، تاریخ‌ها و اطلاعات ضروری"],
+["attachments","پیوست‌ها","textarea","مدارک ضمیمه، در صورت وجود"]]},
+tracking:{title:"یادداشت پیگیری پرونده",fields:[
+["case","عنوان یا شماره پرونده","text","عنوان کوتاه پرونده"],
+["date","تاریخ مهم","text","مثلاً ۱۴۰۵/۰۸/۲۰"],
+["action","اقدام بعدی","textarea","اقدام موردنیاز"],
+["notes","یادداشت","textarea","توضیحات تکمیلی"]]},
+request:{title:"درخواست مشاوره و وکالت",fields:[
+["name","نام و نام خانوادگی","text","نام شما"],
+["phone","شماره تماس","text","شماره تماس"],
+["service","نوع درخواست","select","مشاوره حقوقی|درخواست قبول وکالت|تنظیم سند حقوقی|پیگیری درخواست"],
+["topic","موضوع پرونده","text","مثلاً خانواده، ملک یا قرارداد"],
+["story","شرح درخواست","textarea","خلاصه موضوع و کمک موردنیاز"]]}
+};
+const main=document.getElementById("main");
+let tab="home",current=null,currentDraftId=null,lastSources=[];
+const $=id=>document.getElementById(id);
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function cleanText(v){return String(v||"").replace(/```[\s\S]*?```/g,m=>m.replace(/```[a-z]*\n?/gi,"").replace(/```/g,"")).replace(/^\s{0,3}#{1,6}\s*/gm,"").replace(/\*\*(.*?)\*\*/g,"$1").replace(/__(.*?)__/g,"$1").replace(/^\s*[-*+]\s+/gm,"").replace(/^\s*>\s?/gm,"").replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,"$1").trim();}
+function getDrafts(){try{return JSON.parse(localStorage.getItem("klowDrafts")||"[]")}catch(e){return[]}}
+function putDrafts(a){localStorage.setItem("klowDrafts",JSON.stringify(a))}
+function footer(){return `<div class="footer">${OWNER}<span class="designer">${DESIGNER}</span></div>`}
+function setTab(t){tab=t;document.querySelectorAll(".bottom button").forEach(b=>b.classList.toggle("active",b.dataset.tab===t));({home:home,saved:saved,guide:guide,about:about}[t]||home)();}
+function home(){main.innerHTML=`<div class="section-title"><h3>خدمات حقوقی</h3><span>خدمت موردنظر را انتخاب کنید</span></div><div class="tiles">${services.map(s=>`<button class="tile" onclick="openService('${s.id}')"><div class="ico">${s.icon}</div><b>${s.name}</b><small>${s.desc}</small></button>`).join("")}</div>${footer()}`;}
+function openService(id){current=id;currentDraftId=null;const c=config[id];if(!c)return;main.innerHTML=`<button class="back" onclick="setTab('home')">← بازگشت به خانه</button><div class="panel"><h3>${c.title}</h3><p class="hint">اطلاعات را تا حد امکان دقیق وارد کنید. متن تهیه‌شده پیش‌نویس است و قابل ویرایش خواهد بود.</p><form id="entryForm">${c.fields.map(f=>`<div class="field"><label for="f_${f[0]}">${f[1]}</label>${f[2]==="textarea"?`<textarea id="f_${f[0]}" name="${f[0]}" placeholder="${f[3]}" ${["story"].includes(f[0])?"required":""}></textarea>`:f[2]==="select"?`<select id="f_${f[0]}" name="${f[0]}">${f[3].split("|").map(o=>`<option>${o}</option>`).join("")}</select>`:`<input id="f_${f[0]}" name="${f[0]}" type="text" placeholder="${f[3]}" ${["topic","sender","receiver","claim","plaintiff","defendant","recipient","subject","court"].includes(f[0])?"required":""}>`}</div>`).join("")}<button class="btn gold" type="submit">تهیه پیش‌نویس</button></form></div><div id="output"></div>${footer()}`;$("entryForm").addEventListener("submit",e=>{e.preventDefault();generate(id,new FormData(e.currentTarget));});}
+</script>
 
-شماره تماس حقوق کربلایی: ۰۹۳۳۵۷۷۰۱۷۵
-این فرم در نسخه فعلی به‌صورت محلی ذخیره می‌شود و برای دفتر ارسال نشده است. برای ثبت واقعی درخواست با شماره بالا تماس بگیرید.`}else if(id==='consult'){text=`خلاصه مسئله برای مشاوره حقوقی\nموضوع: ${d.topic||'—'}\nشهر: ${d.city||'—'}\n\nشرح ماجرا:\n${d.story||'—'}\n\nنتیجه موردنظر:\n${d.goal||'—'}\n\nنکات آماده‌سازی:\n۱. تاریخ دقیق اتفاق‌ها را مشخص کنید.\n۲. قراردادها، رسیدها و مکاتبات را نگه دارید.\n۳. مهلت‌های قانونی احتمالی را سریعاً با وکیل بررسی کنید.\n۴. پیش از اقدام، قوانین و مدارک پرونده بررسی شود.`}else if(id==='tracking'){text=`یادداشت پیگیری پرونده\nعنوان/شماره: ${d.case||'—'}\nتاریخ مهم: ${d.date||'—'}\n\nاقدام بعدی:\n${d.action||'—'}\n\nیادداشت:\n${d.notes||'—'}`}else if(id==='notice'){text=`اظهارنامه | پیش‌نویس جهت بازبینی\nاظهارکننده: ${d.sender||'—'}\nمخاطب: ${d.receiver||'—'}\nموضوع: ${d.subject||'—'}\n\nمخاطب محترم،\nبا سلام؛\nاحتراماً، در خصوص ${d.subject||'موضوع فوق'} به اطلاع می‌رساند:\n${d.story||'شرح موضوع درج شود.'}\n\nخواهشمند است در مهلت ${d.date||'متعارف و قانونیِ قابل اعمال'} نسبت به انجام تعهد/رسیدگی به موضوع اقدام نمایید. این متن باید با توجه به قرارداد، ادله و مقررات مربوط تکمیل و بررسی شود.\n\nنام و امضا: ${d.sender||'—'}`}else if(id==='petition'){text=`پیش‌نویس دادخواست برای بازبینی\nخواهان: ${d.plaintiff||'—'}\nخوانده: ${d.defendant||'—'}\nخواسته: ${d.claim||'—'}\nبهای خواسته: ${d.value||'حسب مورد'}\n\nشرح دادخواست:\n${d.story||'شرح ادعا درج شود.'}\n\nدلایل و منضمات:\n${d.evidence||'مدارک و مستندات درج شود.'}\n\nخواسته نهایی و مرجع صالح باید با توجه به قانون و جزئیات پرونده تعیین و قبل از ثبت بررسی شود.`}else if(id==='complaint'){text=`پیش‌نویس شکواییه برای بازبینی\nشاکی: ${d.complainant||'—'}\nمشتکی‌عنه: ${d.accused||'—'}\nموضوع اعلامی: ${d.subject||'—'}\n\nشرح واقعه:\n${d.story||'شرح واقعه درج شود.'}\n\nدلایل و مستندات:\n${d.evidence||'دلایل درج شود.'}\n\nتقاضا: رسیدگی و اتخاذ تصمیم قانونی پس از بررسی موضوع و دلایل. عنوان اتهام و مرجع صالح باید توسط متخصص و بر اساس جزئیات بررسی شود.`}else{text=`پیش‌نویس لایحه برای بازبینی\nمرجع رسیدگی: ${d.court||'—'}\nشماره پرونده: ${d.case||'—'}\nسمت: ${d.role||'—'}\n\nریاست محترم مرجع رسیدگی\nبا سلام و احترام؛\nدر خصوص پرونده فوق، مطالب و دفاعیات اینجانب به شرح زیر تقدیم می‌شود:\n\n${d.story||'شرح دفاعیات درج شود.'}\n\nدلایل و مستندات:\n${d.evidence||'مستندات درج شود.'}\n\nبا احترام\nنام و امضا: ...\n\nاین پیش‌نویس باید با پرونده و قوانین قابل اعمال تطبیق داده شود.`}const out=document.getElementById('output');out.innerHTML=`<div class="panel"><h3>متن نهایی حقوقی</h3><p class="hint">اصلاحات و اطلاعات تکمیلی را در کادر اول بنویسید. هوش مصنوعی آن‌ها را در بخش مناسب متن ادغام می‌کند و نسخه یکپارچه را در کادر دوم می‌گذارد.</p><div class="field"><label for="correctionNotes">اصلاحات و اطلاعات تکمیلی</label><textarea id="correctionNotes" style="min-height:110px" placeholder="مثلاً تاریخ دقیق، مبلغ، نام شخص، توضیحی که جا افتاده یا بخشی که باید اصلاح شود..."></textarea></div><button class="btn gold" id="reviseBtn" onclick="reviseDraft()">اعمال اصلاحات و بازنویسی متن نهایی</button><div class="field"><label for="finalText">متن نهایی کامل و آماده کپی</label><textarea id="finalText" style="min-height:320px">${escapeHtml(cleanFinalText(text))}</textarea></div><button class="btn" onclick="saveDraft()">ذخیره پیش‌نویس</button><button class="btn ghost" onclick="copyDraft()">کپی متن نهایی</button><button class="btn ghost" onclick="printDraft()">چاپ / ذخیره PDF</button><p id="draftStatus" class="hint" aria-live="polite"></p><div class="notice">پیش‌نویس در همین مرورگر و روی همین دستگاه ذخیره می‌شود. برای دسترسی روی دستگاه دیگر، متن را کپی یا PDF ذخیره کنید. پیش از استفاده رسمی، اطلاعات و مستندات قانونی را بررسی کنید.</div></div>`;out.scrollIntoView({behavior:'smooth',block:'start'})}
-function getAiEndpoint(){return '/api/legal-draft'}
-function cleanFinalText(value){return String(value||'').replace(/```[\s\S]*?```/g,m=>m.replace(/```[a-z]*\n?/gi,'').replace(/```/g,'')).replace(/^\s{0,3}#{1,6}\s*/gm,'').replace(/\*\*(.*?)\*\*/g,'$1').replace(/__(.*?)__/g,'$1').replace(/(?<!\*)\*(?!\s)(.*?)(?<!\s)\*(?!\*)/g,'$1').replace(/(?<!_)_(?!\s)(.*?)(?<!\s)_(?!_)/g,'$1').replace(/^\s*[-*+]\s+/gm,'').replace(/^\s*>\s?/gm,'').replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,'$1').trim()}
-async function testAiEndpoint(){const st=document.getElementById('aiStatus');if(st)st.textContent='در حال آزمایش اتصال به سرویس اصلی…';try{const r=await fetch('/api/legal-draft',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'فقط بنویس: اتصال برقرار است.',task:'connection_test',context:{app:'k-low',language:'fa-IR',test:true}})});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();const answer=j.text||j.answer||j.response||j.output;if(typeof answer!=='string'||!answer.trim())throw new Error('پاسخ متنی دریافت نشد');if(st)st.textContent='اتصال برقرار است و پاسخ از سرویس هوش مصنوعی دریافت شد.'}catch(e){if(st)st.textContent='آزمایش اتصال ناموفق بود. مسیر /api/legal-draft یا سرویس سمت سرور را بررسی کنید.'}}
-async function requestAi(message,task,form,previousDraft,corrections){const r=await fetch('/api/legal-draft',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,task,form,context:{app:'k-low',language:'fa-IR',output_format:'plain_legal_text',previous_draft:previousDraft||'',correction_notes:corrections||''},previous_draft:previousDraft||'',correction_notes:corrections||''})});if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();const answer=j.text||j.answer||j.response||j.output;if(typeof answer!=='string'||!answer.trim())throw new Error('پاسخ متنی در خروجی سرویس پیدا نشد');return cleanFinalText(answer)}
- async function generate(id,fd){
-  const d=Object.fromEntries(fd.entries());
-  generateTemplate(id,fd);
-  const out=document.getElementById('output');if(!out)return;
-  const area=out.querySelector('#finalText');if(!area)return;
-  const original=area.value;const status=out.querySelector('#draftStatus');if(status)status.textContent='در حال نگارش متن با هوش مصنوعی…';
-  const prompt=`تو دستیار نگارش حقوقی فارسی سامانه k-low هستی. بر اساس اطلاعات فرم، متن حرفه‌ای، کامل، منسجم و رسمی متناسب با خدمت «${config[id]?.title||id}» بنویس. هرگز ماده قانونی، شماره ماده، رأی، تاریخ یا واقعیتی را جعل نکن. فقط اگر مستند قانونی را با اطمینان از اطلاعات معتبر موجود می‌شناسی به آن استناد کن؛ در غیر این صورت صریحاً بنویس نیاز به بررسی منبع رسمی دارد. اطلاعات ناقص را با جای خالی مشخص کن و واقعیت جدید نساز. متن را با زبان رسمی و بدون Markdown، ستاره، علامت‌های بولد یا کد بنویس. اطلاعات فرم: ${JSON.stringify(d)}. پیش‌نویس اولیه: ${original}. خروجی فقط متن کامل نهایی باشد.`;
-  try{const answer=await requestAi(prompt,id,d,original,'');area.value=answer;if(status)status.textContent='متن اولیه با کمک هوش مصنوعی آماده شد. در صورت نیاز اصلاحات را در کادر بالا بنویسید و دکمه اعمال اصلاحات را بزنید.'}
-  catch(e){if(status)status.textContent='پاسخ هوش مصنوعی دریافت نشد؛ متن اولیه حفظ شد. اتصال سرویس را در بخش راهنما آزمایش کنید.'}
+<script>
+function baseDraft(id,d){
+const title=config[id]?.title||"سند حقوقی";
+if(id==="tracking")return `یادداشت پیگیری پرونده\nعنوان یا شماره پرونده: ${d.case||"—"}\nتاریخ مهم: ${d.date||"—"}\nاقدام بعدی:\n${d.action||"—"}\nیادداشت:\n${d.notes||"—"}`;
+if(id==="request")return `درخواست مشاوره و وکالت\nنام درخواست‌کننده: ${d.name||"—"}\nشماره تماس: ${d.phone||"—"}\nنوع درخواست: ${d.service||"—"}\nموضوع پرونده: ${d.topic||"—"}\nشرح درخواست:\n${d.story||"—"}\n\nشماره تماس دفتر حقوقی خانم نسرین کربلایی: ۰۹۳۳۵۷۷۰۱۷۵`;
+if(id==="adminletter")return `${d.recipient||"مخاطب محترم"}\nموضوع: ${d.subject||"درخواست رسیدگی"}\n\nبا سلام و احترام؛\nاینجانب ${d.sender||"........................"}، به استحضار می‌رسانم:\n\n${d.story||"شرح درخواست در این قسمت درج شود."}\n\nخواهشمند است دستور فرمایید موضوع بررسی و در حدود مقررات مربوط اقدام مقتضی صورت پذیرد.\n\nپیوست‌ها: ${d.attachments||"حسب مورد"}\n\nبا احترام\n${d.sender||"نام و نام خانوادگی"}\nتاریخ و امضا`;
+if(id==="notice")return `اظهارنامه\nاظهارکننده: ${d.sender||"—"}\nمخاطب: ${d.receiver||"—"}\nموضوع: ${d.subject||"—"}\n\nمخاطب محترم؛\nبا سلام و احترام،\nدر خصوص ${d.subject||"موضوع حاضر"} به اطلاع می‌رساند:\n\n${d.story||"شرح موضوع درج شود."}\n\nخواهشمند است در مهلت ${d.deadline||"قابل تعیین با توجه به موضوع و مقررات مربوط"} نسبت به انجام تعهد یا رفع موضوع اقدام نمایید.\n\nنام و امضا: ${d.sender||"—"}`;
+if(id==="petition")return `پیش‌نویس دادخواست\nخواهان: ${d.plaintiff||"—"}\nخوانده: ${d.defendant||"—"}\nخواسته: ${d.claim||"—"}\nبهای خواسته: ${d.value||"حسب مورد"}\n\nشرح دادخواست:\n${d.story||"شرح ادعا درج شود."}\n\nدلایل و منضمات:\n${d.evidence||"دلایل و مدارک درج شود."}\n\nخواسته نهایی و مرجع صالح باید با توجه به اطلاعات پرونده تعیین شود.`;
+if(id==="complaint")return `پیش‌نویس شکواییه\nشاکی: ${d.complainant||"—"}\nمشتکی‌عنه: ${d.accused||"—"}\nموضوع: ${d.subject||"—"}\n\nشرح واقعه:\n${d.story||"شرح واقعه درج شود."}\n\nدلایل و مستندات:\n${d.evidence||"دلایل و مدارک درج شود."}\n\nتقاضا: رسیدگی و اتخاذ تصمیم قانونی با توجه به شرح واقعه و ادله ارائه‌شده.`;
+if(id==="brief")return `ریاست محترم ${d.court||"مرجع رسیدگی"}\nموضوع: لایحه پرونده ${d.case||"—"}\nسمت: ${d.role||"—"}\n\nبا سلام و احترام؛\nدر خصوص پرونده فوق، مطالب و دفاعیات به شرح زیر تقدیم می‌شود:\n\n${d.story||"شرح دفاعیات درج شود."}\n\nدلایل و مستندات:\n${d.evidence||"دلایل و مستندات درج شود."}\n\nبا احترام\nنام و امضا: ........................`;
+return `${title}\nموضوع: ${d.topic||"—"}\n\nشرح مسئله:\n${d.story||"—"}\n\nنتیجه موردنظر:\n${d.goal||"—"}\nشهر محل رسیدگی: ${d.city||"—"}`;
 }
-async function reviseDraft(){const out=document.getElementById('output');if(!out)return;const finalArea=out.querySelector('#finalText');const notesArea=out.querySelector('#correctionNotes');const status=out.querySelector('#draftStatus');const btn=out.querySelector('#reviseBtn');if(!finalArea||!notesArea)return;const corrections=notesArea.value.trim();if(!corrections){if(status)status.textContent='ابتدا اصلاحات یا اطلاعات تکمیلی را بنویسید.';return}const previous=finalArea.value.trim();if(!previous){if(status)status.textContent='ابتدا متن اولیه را تهیه کنید.';return}if(btn){btn.disabled=true;btn.textContent='در حال اعمال اصلاحات…'}if(status)status.textContent='هوش مصنوعی در حال تشخیص محل مناسب هر اصلاح و یکپارچه‌سازی متن است…';const d={};const form=document.getElementById('entry');if(form)for(const [k,v] of new FormData(form).entries())d[k]=v;const prompt=`تو ویراستار و تنظیم‌کننده حرفه‌ای اسناد حقوقی ایران هستی. متن قبلی را با اصلاحات و اطلاعات تکمیلی زیر بازنویسی کن. وظیفه مهم تو این است که خودت تشخیص بدهی هر نکته دقیقاً در کدام بخش و جای متن قرار بگیرد: مشخصات اشخاص در بخش مشخصات، تاریخ‌ها در شرح وقایع یا ترتیب زمانی، مبلغ در خواسته یا شرح تعهد، ادله در بخش دلایل و مستندات، و توضیحات حقوقی در استدلال یا خواسته مرتبط. اصلاحات را صرفاً به انتهای متن اضافه نکن؛ آن‌ها را در محل منطقی مناسب ادغام کن، تکرارها و تناقض‌ها را اصلاح کن و یک متن واحد، کامل و منسجم تحویل بده. هیچ واقعیت، ماده قانونی یا شماره ماده‌ای را جعل نکن. اگر اطلاعات جدید با متن قبلی تعارض دارد، تعارض را با حدس حل نکن و در متن نهایی جای خالی یا توضیح کوتاه بگذار. خروجی باید فقط متن نهایی تمیز و قابل کپی باشد، بدون Markdown، ستاره، بولد، توضیحات درباره روند کار یا فهرست جداگانه تغییرات. نوع خدمت: ${config[current]?.title||'سند حقوقی'}. اطلاعات فرم اصلی: ${JSON.stringify(d)}. متن قبلی: ${previous}. اصلاحات و اطلاعات تکمیلی کاربر: ${corrections}`;try{const answer=await requestAi(prompt,current||'legal_revision',d,previous,corrections);finalArea.value=answer;if(status)status.textContent='اصلاحات در بخش‌های مناسب ادغام شد. متن نهایی را بازبینی و سپس ذخیره کنید.'}catch(e){if(status)status.textContent='بازنویسی انجام نشد و متن قبلی حفظ شد. دکمه آزمایش اتصال را در راهنما بررسی کنید.'}finally{if(btn){btn.disabled=false;btn.textContent='اعمال اصلاحات و بازنویسی متن نهایی'}}}
-function saveDraft(){const area=document.getElementById('finalText')||document.getElementById('draftText');if(!area){alert('ابتدا یک متن تهیه کنید.');return}const content=cleanFinalText(area.value);if(!content){alert('متنی برای ذخیره وجود ندارد.');return}const title=config[current]?.title||'پیش‌نویس حقوقی';let arr=getSaved();const id=Date.now();try{arr.unshift({id,title,content,corrections:document.getElementById('correctionNotes')?.value||'',service:current||'',date:new Date().toLocaleDateString('fa-IR'),savedAt:new Date().toISOString()});setSaved(arr);const status=document.getElementById('draftStatus');if(status)status.textContent='پیش‌نویس در بخش «پیش‌نویس‌ها» ذخیره شد.';else alert('پیش‌نویس در بخش «پیش‌نویس‌ها» ذخیره شد.')}catch(e){alert('ذخیره‌سازی انجام نشد؛ فضای ذخیره‌سازی مرورگر را بررسی کنید.')}}
-function copyDraft(){const el=document.getElementById('finalText')||document.getElementById('draftText');if(!el)return;const text=cleanFinalText(el.value);if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(()=>alert('متن نهایی کپی شد.')).catch(()=>fallbackCopy(el,text))}else fallbackCopy(el,text)}function fallbackCopy(el,text){el.value=text;el.select();try{document.execCommand('copy');alert('متن نهایی کپی شد.')}catch(e){alert('متن را انتخاب و دستی کپی کنید.')}}
-function printDraft(){const el=document.getElementById('finalText')||document.getElementById('draftText');if(!el)return;const t=cleanFinalText(el.value);const w=window.open('','_blank');if(!w){alert('برای چاپ، اجازه بازشدن پنجره را بدهید.');return}w.document.write(`<html lang="fa" dir="rtl"><meta charset="utf-8"><title>پیش‌نویس حقوقی</title><style>body{font-family:Tahoma,Arial;padding:35px;line-height:2;white-space:pre-wrap}</style><body>${escapeHtml(t)}</body></html>`);w.document.close();w.focus();w.print()}
-function saved(){const arr=getSaved();main.innerHTML=`<div class="section-title"><h3>پیش‌نویس‌های من</h3><span>ذخیره‌شده روی همین دستگاه</span></div>${arr.length?arr.map(x=>`<div class="saved-item"><b>${escapeHtml(x.title)}</b><p>${escapeHtml(x.date)}</p><button class="btn ghost" onclick="viewSaved(${x.id})">مشاهده</button><button class="btn ghost" onclick="deleteSaved(${x.id})">حذف</button></div>`).join(''):`<div class="empty">هنوز پیش‌نویسی ذخیره نکرده‌اید.<br>پس از تهیه متن، روی «ذخیره پیش‌نویس» بزنید.</div>`}`};function viewSaved(id){const x=getSaved().find(a=>a.id===id);if(!x)return;main.innerHTML=`<button class="back" onclick="saved()">← بازگشت</button><div class="panel"><h3>${escapeHtml(x.title)}</h3><div class="field"><textarea id="finalText" style="min-height:400px">${escapeHtml(cleanFinalText(x.content))}</textarea></div><button class="btn" onclick="copyDraft()">کپی متن</button><button class="btn ghost" onclick="printDraft()">چاپ / ذخیره PDF</button></div>`}function deleteSaved(id){if(confirm('این پیش‌نویس حذف شود؟')){setSaved(getSaved().filter(x=>x.id!==id));saved()}}
-function guide(){main.innerHTML=`<div class="section-title"><h3>راهنمای استفاده</h3><span>چند نکته مهم</span></div><div class="panel"><h3>قبل از تنظیم سند</h3><p class="hint">۱. اطلاعات را دقیق و بدون حدس وارد کنید.<br>۲. تاریخ‌ها، مبالغ و مشخصات اشخاص را دوباره بررسی کنید.<br>۳. مدارک و مکاتبات را نگه دارید.<br>۴. مهلت‌های قانونی را بررسی کنید.<br>۵. متن نهایی را پیش از ثبت یا ارسال بخوانید.</p><button class="btn gold" onclick="testAiEndpoint()">آزمایش اتصال هوش مصنوعی</button><p id="aiStatus" class="hint" aria-live="polite">سرویس اصلی از مسیر داخلی سایت /api/legal-draft بررسی می‌شود. نیازی به واردکردن یا ذخیره آدرس نیست.</p><div class="notice">پیش‌نویس‌ها در حافظه همین مرورگر و روی همین دستگاه ذخیره می‌شوند. پاک‌کردن داده‌های مرورگر ممکن است آن‌ها را حذف کند. برای نگهداری بلندمدت، از متن نهایی PDF بگیرید یا آن را کپی کنید.</div></div>`}function contactMe(){main.innerHTML=`<div class="panel" style="text-align:center;padding:28px 18px"><div class="mark" style="margin:auto;width:65px;height:65px;font-size:34px">K</div><h2>مشاوره با خانم کربلایی</h2><p class="hint">برای درخواست مشاوره حقوقی، بررسی امکان قبول وکالت یا پرسش درباره خدمات، از شماره زیر استفاده کنید.</p><a class="btn" style="display:block;text-decoration:none" href="tel:09335770175">تماس با ۰۹۳۳۵۷۷۰۱۷۵</a><a class="btn ghost" style="display:block;text-decoration:none" href="https://wa.me/989335770175">گفت‌وگو در واتساپ</a><div class="notice" style="text-align:right">لطفاً اطلاعات حساس، رمزها و اطلاعات بانکی را ارسال نکنید. در نسخه فعلی، ثبت فرم درخواست به معنی ارسال آن برای دفتر نیست.</div><button class="btn ghost" onclick="goHome()">بازگشت به خانه</button></div>`}function about(){main.innerHTML=`<div class="panel" style="text-align:center;padding:28px 18px"><div class="mark" style="margin:auto;width:65px;height:65px;font-size:34px">K</div><h2 style="margin-bottom:4px">حقوق کربلایی</h2><p class="hint">دستیار حقوقی و تنظیم پیش‌نویس اسناد</p><p class="hint">مشاوره اولیه، تنظیم پیش‌نویس و راهنمای آماده‌سازی مدارک در یک برنامه فارسی.</p><a class="btn" style="display:block;text-decoration:none" href="tel:09335770175">مشاوره با خانم کربلایی: ۰۹۳۳۵۷۷۰۱۷۵</a><div class="notice" style="text-align:right">حقوق این سایت متعلق به خانم نسرین کربلایی می‌باشد. این برنامه جایگزین بررسی تخصصی پرونده یا سامانه رسمی قضایی نیست. اطلاعات پرونده را محرمانه نگه دارید و از واردکردن اطلاعات غیرضروری خودداری کنید.</div><p class="footer">نسخه نمایشی ۰.۲</p></div>`}function goHome(){tab='home';updateNav();home()}function updateNav(){document.querySelectorAll('.bottom button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab))}document.querySelectorAll('.bottom button').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;updateNav();({home,saved,guide,about}[tab]||home)()}));home();
-const footerObserver=new MutationObserver(()=>{const old=main.querySelector('.legal-footer');if(!old){const existing=main.querySelector('.footer');if(existing)existing.remove();const f=document.createElement('div');f.className='footer legal-footer';f.innerHTML='حقوق این سایت متعلق به خانم نسرین کربلایی می‌باشد.<br><span style="float:right">طراح: محسن عبدی</span>';main.appendChild(f);}});footerObserver.observe(main,{childList:true});
-</script></body></html>
+function renderOutput(text,notes="",sources=[]){
+const out=$("output");if(!out)return;
+out.innerHTML=`<div class="panel">
+<h3>متن نهایی</h3>
+<p class="hint">این کادر فقط برای متن نهایی سند است. اصلاحات را در کادر زیر بنویسید؛ متن قبلی با اطلاعات جدید بازنویسی می‌شود.</p>
+<div class="final-box"><textarea id="finalText" aria-label="متن نهایی">${esc(cleanText(text))}</textarea></div>
+<div class="notes-box">
+<div class="field" style="margin-top:0"><label for="correctionNotes">اصلاحات و اطلاعات تکمیلی</label><textarea id="correctionNotes" placeholder="اطلاعات جدید، تاریخ، مبلغ، مشخصات یا اصلاح موردنظر را بنویسید..."></textarea></div>
+<button class="btn gold" id="reviseBtn" onclick="reviseDraft()">اعمال اصلاحات و بازنویسی متن نهایی</button>
+<p class="hint" style="margin:10px 0 0">پس از بازنویسی موفق، اصلاحات قبلی در متن باقی می‌مانند و اطلاعات جدید به آن اضافه می‌شود.</p>
+</div>
+<div class="field"><label for="extraNotes">توضیحات تکمیلی جدا از متن نهایی</label><textarea id="extraNotes" placeholder="نکات تکمیلی، ابهام‌ها یا مواردی که نباید داخل سند قرار بگیرند...">${esc(notes)}</textarea></div>
+${sources.length?`<div class="field"><label>منابع قانونی بازگردانده‌شده از سرویس</label><div class="notice source-list">${sources.map(s=>esc(typeof s==="string"?s:(s.title||s.name||s.article||s.text||JSON.stringify(s)))).join("<br>")}</div></div>`:""}
+<button class="btn" onclick="saveDraft()">ذخیره پیش‌نویس</button>
+<button class="btn ghost" onclick="copyFinal()">کپی متن نهایی</button>
+<button class="btn ghost" onclick="printFinal()">چاپ / ذخیره PDF</button>
+<p class="status" id="draftStatus" aria-live="polite"></p>
+</div>`;
+}
+function formValues(){const form=$("entryForm");return form?Object.fromEntries(new FormData(form).entries()):{}}
+function updateStatus(msg){const el=$("draftStatus");if(el)el.textContent=msg}
+function showSources(j){return Array.isArray(j.sources)?j.sources:Array.isArray(j.legal_sources_found)?j.legal_sources_found:[]}
+async function callAi(message,task,form,previous,corrections){
+const payload={
+message,task,form,
+previous_draft:previous||"",
+correction_notes:corrections||"",
+context:{
+app:"k-low",language:"fa-IR",
+output_format:"plain_text_legal_document",
+previous_draft:previous||"",
+correction_notes:corrections||"",
+preserve_previous_edits:true,
+legal_database:"D1"
+}};
+const response=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+if(!response.ok)throw new Error("HTTP "+response.status);
+const data=await response.json();
+const answer=data.text||data.answer||data.response||data.output;
+if(typeof answer!=="string"||!answer.trim())throw new Error("پاسخ متنی دریافت نشد");
+return {text:cleanText(answer),sources:showSources(data),notes:data.explanation||data.notes||data.additional_notes||""};
+}
+async function generate(id,fd){
+const d=Object.fromEntries(fd.entries());
+const initial=baseDraft(id,d);
+renderOutput(initial);
+updateStatus("در حال تهیه متن با هوش مصنوعی…");
+const prompt=`به عنوان تنظیم‌کننده حرفه‌ای اسناد حقوقی ایران عمل کن. خدمت موردنظر: ${config[id]?.title||id}. بر اساس اطلاعات فرم و پیش‌نویس اولیه، متن رسمی، کامل و منسجم بنویس. از دیتابیس حقوقی متصل به سرویس برای یافتن مواد قانونی مرتبط استفاده کن. فقط مواد و مستنداتی را ذکر کن که واقعاً در منبع معتبر یا دیتابیس قابل تأیید هستند. هیچ شماره ماده، عنوان قانون، رأی یا واقعیتی را جعل نکن. اطلاعاتی که کاربر نداده نساز؛ اطلاعات نامعلوم را با جای خالی مشخص کن. خروجی اصلی فقط متن نهایی سند همراه با مواد قانونی مرتبط باشد. هیچ مقدمه، هشدار عمومی، توصیه به مراجعه به وکیل، توضیح روند کار یا توضیح اضافه داخل متن سند ننویس. هر توضیح لازم را جداگانه در فیلد explanation برگردان، اگر قالب پاسخ سرویس چنین فیلدی را پشتیبانی می‌کند. متن باید فارسی رسمی، راست‌چین و بدون Markdown باشد. اطلاعات فرم: ${JSON.stringify(d)}. پیش‌نویس اولیه: ${initial}`;
+try{
+const result=await callAi(prompt,id,d,initial,"");
+$("finalText").value=result.text;
+lastSources=result.sources;
+if(result.notes&&$("extraNotes"))$("extraNotes").value=result.notes;
+updateStatus("متن اولیه آماده شد. می‌توانید اصلاحات را وارد کنید.");
+}catch(e){updateStatus("پاسخ هوش مصنوعی دریافت نشد؛ متن اولیه حفظ شد. اتصال را در بخش راهنما آزمایش کنید.");}
+}
+async function reviseDraft(){
+const finalArea=$("finalText"),correctionArea=$("correctionNotes"),btn=$("reviseBtn");
+if(!finalArea||!correctionArea)return;
+const newCorrection=correctionArea.value.trim();
+if(!newCorrection){updateStatus("ابتدا اصلاح یا اطلاعات تکمیلی را بنویسید.");return;}
+const previous=finalArea.value.trim();
+if(!previous){updateStatus("ابتدا متن اولیه را تهیه کنید.");return;}
+const d=formValues();
+const previousHistory=window.kLowCorrectionHistory||[];
+if(btn){btn.disabled=true;btn.textContent="در حال ادغام اصلاحات…";}
+updateStatus("در حال تشخیص محل مناسب اصلاحات و بازنویسی رسمی متن…");
+const prompt=`تو ویراستار ارشد اسناد حقوقی ایران هستی. باید متن موجود را با اصلاحات تازه کاربر بازنویسی کنی. مهم: متن موجود شامل اصلاحات موفق قبلی است؛ هیچ‌یک از اطلاعات معتبر آن را حذف نکن. اصلاح تازه را صرفاً به انتهای متن نچسبان. محل درست هر داده را تشخیص بده و در همان قسمت ادغام کن: نام‌ها در مشخصات اشخاص، تاریخ‌ها در شرح وقایع به ترتیب زمانی، مبلغ‌ها در شرح تعهد یا خواسته، دلایل در بخش ادله، و توضیح حقوقی در استدلال یا بخش مرتبط. عبارت‌های عامیانه را به فارسی رسمی و حقوقی تبدیل کن، بدون تغییر معنای واقعی. تکرارها را حذف کن، اما هیچ واقعیت قبلی یا اصلاح قبلی را از بین نبر. اگر اطلاعات تازه با متن قبلی متناقض است، خودت حدس نزن؛ تعارض را در فیلد توضیحات جداگانه گزارش کن و در متن اصلی اطلاعات قطعی را حفظ کن. از دیتابیس حقوقی متصل برای مواد قانونی مرتبط استفاده کن. فقط ماده‌هایی را بیاور که قابل تأیید هستند؛ هیچ ماده یا شماره‌ای نساز. متن اصلی باید فقط سند نهایی همراه با استنادهای قانونی باشد، بدون هشدار، مقدمه، توضیح درباره کار هوش مصنوعی یا توصیه به وکیل. توضیحات و ابهام‌ها باید جدا از متن اصلی برگردند. اگر سرویس پاسخ ساختاریافته دارد، از فیلدهای text و explanation استفاده کن؛ در غیر این صورت فقط متن نهایی را برگردان. نوع سند: ${config[current]?.title||current}. اطلاعات فرم اولیه: ${JSON.stringify(d)}. متن نهایی فعلی که باید حفظ و تکمیل شود: ${previous}. تاریخچه اصلاحات قبلی که در متن ادغام شده‌اند: ${JSON.stringify(previousHistory)}. اصلاح جدید که باید همین بار اعمال شود: ${newCorrection}`;
+try{
+const result=await callAi(prompt,"revise_"+(current||"document"),d,previous,newCorrection);
+finalArea.value=result.text;
+window.kLowCorrectionHistory=[...previousHistory,{text:newCorrection,at:new Date().toISOString()}];
+lastSources=result.sources;
+if(result.notes&&$("extraNotes"))$("extraNotes").value=result.notes;
+correctionArea.value="";
+updateStatus("اصلاح جدید اعمال شد و متن قبلی حفظ شد. برای نگهداری تغییرات، پیش‌نویس را ذخیره کنید.");
+}catch(e){updateStatus("بازنویسی انجام نشد؛ متن قبلی و اصلاح نوشته‌شده حفظ شده‌اند. اتصال سرویس را بررسی کنید.");}
+finally{if(btn){btn.disabled=false;btn.textContent="اعمال اصلاحات و بازنویسی متن نهایی";}}
+}
+</script>
+
+<script>
+function saveDraft(){
+const area=$("finalText");
+if(!area){alert("ابتدا یک پیش‌نویس تهیه کنید.");return;}
+const content=cleanText(area.value);
+if(!content){alert("متنی برای ذخیره وجود ندارد.");return;}
+const drafts=getDrafts();
+const now=new Date().toISOString();
+const item={
+id:currentDraftId||Date.now(),
+title:config[current]?.title||"پیش‌نویس حقوقی",
+service:current||"",
+content,
+extraNotes:$("extraNotes")?.value||"",
+correctionHistory:window.kLowCorrectionHistory||[],
+date:new Date().toLocaleDateString("fa-IR"),
+updatedAt:now
+};
+const index=drafts.findIndex(x=>x.id===item.id);
+if(index>=0)drafts[index]=item;else drafts.unshift(item);
+try{
+putDrafts(drafts);
+currentDraftId=item.id;
+updateStatus("پیش‌نویس با موفقیت ذخیره شد.");
+}catch(e){updateStatus("ذخیره انجام نشد. فضای ذخیره‌سازی مرورگر را بررسی کنید.");}
+}
+function saved(){
+const drafts=getDrafts();
+main.innerHTML=`<div class="section-title"><h3>پیش‌نویس‌های من</h3><span>ذخیره‌شده روی این دستگاه</span></div>
+${drafts.length?drafts.map(x=>`<div class="saved-item">
+<b>${esc(x.title||"پیش‌نویس حقوقی")}</b>
+<p>آخرین ذخیره: ${esc(x.date||"")}</p>
+<div class="saved-actions">
+<button class="btn gold" onclick="editSaved(${Number(x.id)})">مشاهده و ویرایش</button>
+<button class="btn ghost" onclick="copySaved(${Number(x.id)})">کپی</button>
+<button class="btn ghost" onclick="deleteSaved(${Number(x.id)})">حذف</button>
+</div></div>`).join(""):`<div class="empty">هنوز پیش‌نویسی ذخیره نشده است.<br>پس از تهیه متن، دکمه «ذخیره پیش‌نویس» را بزنید.</div>`}
+${footer()}`;
+}
+function editSaved(id){
+const item=getDrafts().find(x=>x.id===id);
+if(!item)return;
+current=item.service||null;
+currentDraftId=item.id;
+window.kLowCorrectionHistory=item.correctionHistory||[];
+lastSources=[];
+main.innerHTML=`<button class="back" onclick="setTab('saved')">← بازگشت به پیش‌نویس‌ها</button>
+<div class="panel"><h3>ویرایش پیش‌نویس</h3>
+<p class="hint">${esc(item.title||"پیش‌نویس حقوقی")}</p>
+<div class="final-box"><textarea id="finalText" aria-label="متن نهایی">${esc(item.content||"")}</textarea></div>
+<div class="field"><label for="correctionNotes">اصلاحات و اطلاعات تکمیلی</label><textarea id="correctionNotes" placeholder="اصلاح جدید را بنویسید..."></textarea></div>
+<button class="btn gold" id="reviseBtn" onclick="reviseDraft()">اعمال اصلاحات و بازنویسی متن نهایی</button>
+<div class="field"><label for="extraNotes">توضیحات تکمیلی جدا از متن نهایی</label><textarea id="extraNotes" placeholder="یادداشت‌های جداگانه">${esc(item.extraNotes||"")}</textarea></div>
+<button class="btn" onclick="saveDraft()">ذخیره پیش‌نویس</button>
+<button class="btn ghost" onclick="copyFinal()">کپی متن نهایی</button>
+<button class="btn ghost" onclick="printFinal()">چاپ / ذخیره PDF</button>
+<p class="status" id="draftStatus" aria-live="polite"></p>
+</div>${footer()}`;
+}
+function copySaved(id){
+const item=getDrafts().find(x=>x.id===id);
+if(item)copyText(item.content||"");
+}
+function deleteSaved(id){
+if(!confirm("این پیش‌نویس حذف شود؟"))return;
+putDrafts(getDrafts().filter(x=>x.id!==id));
+saved();
+}
+function copyText(text){
+const value=cleanText(text);
+if(navigator.clipboard&&navigator.clipboard.writeText){
+navigator.clipboard.writeText(value).then(()=>alert("متن کپی شد.")).catch(()=>copyFallback(value));
+}else copyFallback(value);
+}
+function copyFallback(text){
+const temp=document.createElement("textarea");
+temp.value=text;temp.style.position="fixed";temp.style.opacity="0";
+document.body.appendChild(temp);temp.select();
+try{document.execCommand("copy");alert("متن کپی شد.");}
+catch(e){alert("کپی خودکار انجام نشد. متن را دستی انتخاب کنید.");}
+temp.remove();
+}
+function copyFinal(){
+const area=$("finalText");
+if(area)copyText(area.value);
+}
+function printFinal(){
+const area=$("finalText");
+if(!area)return;
+const win=window.open("","_blank");
+if(!win){alert("برای چاپ، اجازه بازشدن پنجره را بدهید.");return;}
+win.document.open();
+win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>متن نهایی</title><style>body{font-family:Tahoma,Arial,sans-serif;margin:30px;line-height:2.2;white-space:pre-wrap;color:#111;font-size:14px}</style></head><body>${esc(cleanText(area.value))}</body></html>`);
+win.document.close();win.focus();
+setTimeout(()=>win.print(),250);
+}
+function guide(){
+main.innerHTML=`<div class="section-title"><h3>راهنمای استفاده</h3><span>راهنمای سامانه</span></div>
+<div class="panel">
+<h3>چطور از k-low استفاده کنید؟</h3>
+<p class="hint">
+۱. خدمت موردنظر را انتخاب کنید و اطلاعات را بنویسید.<br>
+۲. متن اولیه را تهیه کنید.<br>
+۳. اصلاحات جدید را وارد کنید و «اعمال اصلاحات» را بزنید.<br>
+۴. متن نهایی را بررسی و با دکمه «ذخیره پیش‌نویس» نگهداری کنید.<br>
+۵. برای ویرایش بعدی به بخش «پیش‌نویس‌ها» بروید.
+</p>
+<button class="btn gold" onclick="testConnection()">آزمایش اتصال هوش مصنوعی</button>
+<p class="status" id="aiStatus" aria-live="polite">اتصال از مسیر داخلی سایت بررسی می‌شود.</p>
+<div class="notice">پیش‌نویس‌ها در حافظه مرورگر همین دستگاه ذخیره می‌شوند. پاک‌کردن اطلاعات مرورگر یا استفاده از گوشی دیگر ممکن است دسترسی به آن‌ها را از بین ببرد.</div>
+</div>${footer()}`;
+}
+async function testConnection(){
+const status=$("aiStatus");
+if(status)status.textContent="در حال آزمایش اتصال…";
+try{
+const result=await fetch(API,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+message:"آزمایش اتصال. فقط عبارت «اتصال برقرار است» را برگردان.",
+task:"connection_test",
+context:{app:"k-low",language:"fa-IR",test:true}
+})
+});
+if(!result.ok)throw new Error("HTTP "+result.status);
+const data=await result.json();
+const answer=data.text||data.answer||data.response||data.output;
+if(typeof answer!=="string"||!answer.trim())throw new Error("Empty response");
+if(status)status.textContent="اتصال برقرار است و سرویس پاسخ داده است.";
+}catch(e){
+if(status)status.textContent="اتصال ناموفق بود. مسیر /api/legal-draft و تنظیمات سرویس سمت سرور را بررسی کنید.";
+}
+}
+function about(){
+main.innerHTML=`<div class="panel" style="text-align:center;padding:26px 18px">
+<div class="mark" style="margin:auto;width:65px;height:65px;font-size:35px">K</div>
+<h2>k-low</h2><p class="hint">مشاوره حقوقی خانم کربلایی</p>
+<a class="btn gold" href="tel:09335770175">تماس با خانم نسرین کربلایی</a>
+<a class="btn ghost" href="https://wa.me/989335770175">ارتباط در واتساپ</a>
+<div class="notice" style="text-align:right">${OWNER}<br>${DESIGNER}</div>
+</div>${footer()}`;
+}
+document.querySelectorAll(".bottom button").forEach(btn=>{
+btn.addEventListener("click",()=>setTab(btn.dataset.tab));
+});
+home();
+</script>
+</body>
+</html>
