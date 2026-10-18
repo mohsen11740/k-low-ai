@@ -1,400 +1,825 @@
-const SYSTEM_PROMPT = `
-تو دستیار حرفه‌ای نگارش و تحلیل حقوقی ایران در سامانه «حقوق کربلایی / k-low» هستی. خروجی باید مبتنی بر داده‌های صریح کاربر باشد و از تکمیل خلاقانه یا حدس‌زدن واقعیت‌ها خودداری کند.
+const AVALAI_URL = "https://api.avalai.ir/v1/chat/completions";
+const AVALAI_MODEL = "qwen3.8-flash";
 
-قواعد الزامی:
-۱. فقط اطلاعاتی را به‌عنوان واقعیت بیان کن که کاربر گفته یا از منبع قابل‌تأیید بازیابی شده است. نام، مبلغ، تاریخ، شماره پرونده، نشانی، دلیل یا واقعه جعل نکن.
-۱-الف. «دفتر قطعی اطلاعات کاربر» از فرم و اصلاحات، مرجع اصلی واقعیت‌هاست. نقش‌های صریح مثل خواهان و خوانده، شاکی و مشتکی‌عنه، فرستنده و مخاطب را هرگز برعکس نکن.
-۱-ب. هیچ مبلغی را با افزودن یا حذف صفر تغییر نده. هیچ مبلغی را به تومان یا ریال تبدیل نکن و هیچ واحد پولی را که کاربر نگفته اضافه نکن. اگر واحد پولی معلوم نیست، مبلغ را عیناً حفظ کن و ابهام را فقط در توضیحات تکمیلی اعلام کن.
-۱-ج. رابطه مالی متقابل، قرض گرفتن از سوی خواهان، قرارداد قرض یا تعهدی را که کاربر نگفته، نساز. اگر کاربر می‌گوید پول پرداختی خود را پس می‌خواهد، فقط همان ادعا را با اتکا به اطلاعات ارائه‌شده بیان کن.
-۱-د. هیچ جای‌خالی ساختگی مثل [شماره پرونده]، [نام قانون]، «شرح درج شود»، «درخواست» به‌عنوان دلیل، یا عبارت مشابه در متن نهایی نگذار. اگر اطلاعاتی موجود نیست، آن سطر را حذف کن و نیاز به اطلاعات را در توضیحات تکمیلی بنویس.
-۲. اطلاعات فرم را بر اساس معنای واقعی آن مرتب کن، نه صرفاً نام فیلد. اگر نام یا مشخصات شخص، موضوع، خواسته، شاکی، مشتکی‌عنه، خواهان، خوانده، مخاطب، مرجع رسیدگی، شماره پرونده، تاریخ، مبلغ یا دلیل در فیلد نامناسب وارد شده، آن را بدون حذف معنا در بخش درست قرار بده.
-۳. تاریخ‌های مختلف ممکن است مربوط به اسناد و رویدادهای مستقل باشند: تاریخ قرارداد، تاریخ وقوع، تاریخ ابلاغ، تاریخ پرداخت و تاریخ جلسه را جدا نگه دار. هرگز تاریخ جدید را به‌صورت سراسری جایگزین همه تاریخ‌ها نکن. فقط تاریخ همان رویدادی را تغییر بده که کاربر صریحاً اصلاح کرده است. اگر ارتباط تاریخ مبهم است، حدس نزن و ابهام را در توضیحات تکمیلی بنویس.
-۴. اگر تنظیم سند خواسته شده، متن کامل و قابل ارائه بنویس. متن نهایی فقط سند باشد و توضیح هوش مصنوعی، هشدار عمومی، توصیه تماس یا توضیح روند کار را داخل سند نیاور.
-۵. بین دعوای حقوقی و شکایت کیفری تفاوت بگذار. صرف اختلاف مالی یا قراردادی را بدون دلیل کافی جرم معرفی نکن.
-۶. هرگز ماده قانونی، شماره ماده، عنوان قانون یا رأی را از حافظه حدس نزن. فقط از رکوردهای واقعی بانک قوانین که در پیام کاربر با عنوان «نتایج واقعی SQL از D1» آمده استفاده کن. اگر نتایج SQL وجود ندارد یا کافی نیست، ماده مشخصی را جعل نکن و کمبود منبع را در توضیحات تکمیلی بگو.
-۷. اگر حداقل دو رکورد قانونی مرتبط از SQL دریافت شده، در متن سند فقط ماده‌هایی را استناد بده که واقعاً مرتبط‌اند و در توضیحات تکمیلی دو مستند قانونی مرتبط را با عنوان قانون، شماره ماده و دلیل ارتباط معرفی کن. اگر کمتر از دو رکورد مرتبط وجود دارد، مورد ساختگی نساز.
-۸. خروجی تولید سند باید دقیقاً شامل [[متن نهایی]] و سپس فقط متن قابل ارائه، بعد [[توضیحات تکمیلی]] و سپس فقط توضیحات خارج از سند باشد. متن فارسی رسمی و بدون Markdown باشد.
-۹. در پایان توضیحات تکمیلی این جمله را بیاور: «این متن صرفاً مشاوره هوش مصنوعی است؛ برای بررسی دقیق‌تر با خانم نسرین کربلایی تماس بگیرید: ۰۹۳۳۵۷۷۰۱۷۵.»
+const SYSTEM_PROMPT = `
+تو دستیار تخصصی نگارش حقوقی فارسی سامانه k-low هستی.
+
+وظایف تو:
+۱. درخواست کاربر را دقیق بفهم و آن را به فارسی رسمی، منسجم و حرفه‌ای تبدیل کن.
+۲. در مشاوره حقوقی، موضوع، قواعد قابل استناد، شرایط اعمال قانون و راهکارهای احتمالی را توضیح بده.
+۳. در تنظیم دادخواست، شکواییه، اظهارنامه، لایحه و نامه اداری، متن رسمی و قابل بازبینی تهیه کن.
+۴. برای استناد قانونی، فقط از مواد ارائه‌شده در بخش «مواد بازیابی‌شده از بانک قوانین» استفاده کن.
+۵. هرگز شماره ماده، نام قانون، رأی قضایی، شماره پرونده، تاریخ، مبلغ، نام شخص یا واقعه‌ای را جعل نکن.
+۶. اگر منبع قانونی مرتبط بازیابی نشده است، ماده‌ای را از حافظه حدس نزن. در توضیحات تکمیلی اعلام کن که برای استناد دقیق‌تر باید منبع قانونی بررسی شود.
+۷. اطلاعاتی را که کاربر نداده است، به متن اضافه نکن. جای خالی، کروشه، نام فرضی یا تاریخ فرضی نساز.
+۸. اگر فیلدی خالی است، تا جایی که امکان دارد متن را بدون آن تنظیم کن. خالی بودن فیلد غیرضروری نباید مانع تولید متن شود.
+۹. اظهارات کاربر را از واقعیت اثبات‌شده تفکیک کن. ادعای کاربر را بدون دلیل، واقعیت قطعی معرفی نکن.
+۱۰. مبلغ، تاریخ، سمت اشخاص و شرح وقایع را تغییر نده. اگر اطلاعات متناقض‌اند، تناقض را در توضیحات تکمیلی مشخص کن.
+۱۱. در تحلیل رأی یا دستور قضایی، فقط بر اساس متن ارائه‌شده تحلیل کن. قسمت‌های ناخوانا یا اطلاعات مفقود را حدس نزن.
+۱۲. نشانی و شماره تلفن مراجع قضایی را بدون منبع معتبر ارائه نکن.
+۱۳. توضیحات تکمیلی باید ساده، قابل فهم و جدا از متن رسمی باشد.
+
+خروجی پاسخ‌های حقوقی را دقیقاً با این قالب بنویس:
+
+[[متن نهایی]]
+متن رسمی یا پاسخ حقوقی
+
+[[توضیحات تکمیلی]]
+شرح ساده نتیجه، نکات مهم، اطلاعات احتمالیِ موردنیاز و محدودیت منابع
+
+بیرون از این دو بخش مقدمه یا توضیح اضافه ننویس.
 `;
 
 const REVISION_SYSTEM_PROMPT = `
-تو ویرایشگر محافظه‌کار اسناد حقوقی سامانه k-low هستی. وظیفه‌ات بازنویسی کامل سند نیست، بلکه تولید اصلاحات موضعی دقیق است.
-خروجی باید فقط یک JSON معتبر باشد و هیچ متن یا Markdown دیگری نداشته باشد. قالب:
-{"changes":[{"target_text":"قطعه دقیق و عیناً کپی‌شده از متن قبلی","replacement_text":"نسخه اصلاح‌شده همان قطعه"}],"insertions":[{"after_text":"قطعه دقیق و یکتای موجود در متن قبلی","text":"اطلاعات جدید برای درج در محل مناسب","position":"after"}],"explanation":"توضیحات خارج از متن نهایی"}
-فقط target_text را وقتی بده که آن قطعه عیناً در متن قبلی وجود دارد و محلش روشن است. برای درج اطلاعات جدید، after_text باید عیناً از متن قبلی کپی شود و فقط یک‌بار در متن موجود باشد. متن کامل بازنویسی‌شده را هرگز در خروجی قرار نده. بخش‌هایی که به اصلاحات ربط ندارند باید در مرورگر عیناً حفظ شوند.
-هر تاریخ را به رویداد یا سند خودش پیوند بده. هرگز تاریخ جدید را سراسری جایگزین همه تاریخ‌ها نکن و تاریخ‌های مستقل را حذف نکن. همین قاعده برای نام‌ها، مبالغ و شماره پرونده‌ها برقرار است. هیچ مبلغی را با افزودن یا حذف صفر تغییر نده، واحد تومان/ریال را حدس نزن و جهت پرداخت یا قرض را برعکس نکن. هیچ جای‌خالی داخل متن نهایی ننویس. اگر محل دقیق اصلاح مبهم است، آن را اعمال نکن و ابهام را در explanation بنویس.
-از ماده یا شماره قانونی حدس‌زده استفاده نکن. فقط از «نتایج واقعی SQL از D1» استفاده کن. در توضیحات تکمیلی مواد قانونی را از خودت نساز. در پایان explanation بنویس: «این متن صرفاً مشاوره هوش مصنوعی است؛ برای بررسی دقیق‌تر با خانم نسرین کربلایی تماس بگیرید: ۰۹۳۳۵۷۷۰۱۷۵.»
+تو ویراستار تخصصی متون حقوقی فارسی هستی.
+پیش‌نویس قبلی را با توجه به اصلاحات صریح کاربر بازنویسی کن.
+اطلاعات، مبالغ، تاریخ‌ها، نقش اشخاص و وقایع را تغییر نده، مگر کاربر صریحاً درخواست کرده باشد.
+ماده قانونی یا واقعیت تازه نساز.
+اگر اصلاح درخواستی با اطلاعات قبلی تعارض دارد، تعارض را در notes توضیح بده.
+پاسخ را فقط به شکل JSON معتبر برگردان:
+{"text":"متن کامل اصلاح‌شده","notes":"شرح کوتاه اصلاحات"}
 `;
 
 const CLASSIFY_SYSTEM_PROMPT = `
-تو دسته‌بند درخواست‌های حقوقی فارسی هستی. فقط JSON معتبر با کلیدهای service و reason برگردان و هیچ متن دیگری ننویس.
-service فقط یکی از این موارد باشد: notice, petition, complaint, brief, adminletter, consult.
-notice یعنی اظهارنامه برای اعلام رسمی خواسته یا مطالبه به مخاطب؛ petition یعنی دادخواست برای طرح دعوای حقوقی؛ complaint یعنی شکواییه برای گزارش جرم؛ brief یعنی لایحه برای دفاع یا توضیح در پرونده موجود؛ adminletter یعنی نامه یا درخواست اداری خطاب به اداره/سازمان؛ consult یعنی کاربر هنوز راهنمایی می‌خواهد یا نوع سند روشن نیست.
-از هدف و معنای کل متن استفاده کن، نه یک کلمه منفرد. اگر موضوع مبهم است، consult را انتخاب کن. قالب: {"service":"complaint","reason":"دلیل کوتاه فارسی"}
+درخواست کاربر را در یکی از دسته‌های زیر قرار بده:
+consult, notice, petition, complaint, brief, adminletter, tracking, judgment_analysis, request
+فقط JSON معتبر برگردان:
+{"service":"نام دسته","confidence":0.0,"reason":"دلیل کوتاه فارسی"}
+هیچ متن دیگری ننویس.
 `;
 
-const CONNECTION_SYSTEM_PROMPT = `فقط همین جمله را برگردان: اتصال برقرار است.`;
+const CONNECTION_SYSTEM_PROMPT = "فقط همین جمله را برگردان: اتصال برقرار است.";
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === "/api/legal-draft") {
-      if (request.method !== "POST") {
-        return json({ error: "متد درخواست مجاز نیست." }, 405);
-      }
 
-      let body;
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: corsHeaders()
+      });
+    }
+
+    if (url.pathname === "/health") {
+      return json({
+        ok: true,
+        service: "k-low-ai",
+        provider: "AvalAI",
+        model: AVALAI_MODEL,
+        legal_database_configured: Boolean(env.LEGAL_DB),
+        api_key_configured: Boolean(env.AVALAI_API_KEY)
+      });
+    }
+
+    if (url.pathname !== "/api/legal-draft") {
+      return json({ error: "مسیر درخواست پیدا نشد." }, 404);
+    }
+
+    if (request.method !== "POST") {
+      return json(
+        { error: "روش درخواست پشتیبانی نمی‌شود." },
+        405,
+        { Allow: "POST, OPTIONS" }
+      );
+    }
+
+    if (!env.AVALAI_API_KEY) {
+      console.error("AVALAI_API_KEY is missing.");
+      return json({
+        error: "کلید اتصال هوش مصنوعی در تنظیمات سرور ثبت نشده است."
+      }, 503);
+    }
+
+    let body;
+
+    try {
+      body = await request.json();
+    } catch {
+      return json({ error: "اطلاعات ارسالی معتبر نیست." }, 400);
+    }
+
+    const message = safeString(body?.message, 30000);
+    const task = safeString(body?.task, 100) || "legal_draft";
+    const form = isPlainObject(body?.form) ? body.form : {};
+    const context = isPlainObject(body?.context) ? body.context : {};
+
+    const previousDraft = safeString(
+      body?.previous_draft || context.previous_draft,
+      30000
+    );
+
+    const correctionNotes = safeString(
+      body?.correction_notes || context.correction_notes,
+      15000
+    );
+
+    if (!message.trim()) {
+      return json({
+        error: "لطفاً متن یا اطلاعات درخواست را وارد کنید."
+      }, 400);
+    }
+
+    let legalSources = [];
+    let sourceStatus = "not_requested";
+
+    if (task !== "classify_service" && task !== "connection_test") {
       try {
-        body = await request.json();
-      } catch {
-        return json({ error: "درخواست ارسالی معتبر نیست." }, 400);
-      }
-      if (!body || typeof body !== "object" || Array.isArray(body)) {
-        return json({ error: "ساختار درخواست معتبر نیست." }, 400);
-      }
-
-      const message = typeof body.message === "string" ? body.message.trim() : "";
-      if (!message) return json({ error: "لطفاً درخواست حقوقی خود را بنویسید." }, 400);
-      if (message.length > 20000) return json({ error: "متن درخواست بیش از حد طولانی است." }, 413);
-
-      const task = safeString(body.task, 300);
-      const form = safeJson(body.form, 10000);
-      const parsedContext = safeJson(body.context, 10000);
-      const context = {
-        ...(parsedContext && typeof parsedContext === "object" ? parsedContext : {}),
-        previous_draft: safeString(body.previous_draft, 10000) || safeString(parsedContext?.previous_draft, 10000),
-        correction_notes: safeString(body.correction_notes, 10000) || safeString(parsedContext?.correction_notes, 10000)
-      };
-
-      try {
-        if (!env.AI || typeof env.AI.run !== "function") {
-          console.error("Workers AI binding is missing.");
-          return json({ error: "اتصال هوش مصنوعی در تنظیمات سرور فعال نیست." }, 503);
-        }
-
-        let legalSources = [];
-        let sourceStatus = "not_requested";
-        if (task !== "classify_service" && task !== "connection_test") {
-          const retrieval = await searchLegalArticles(env.LEGAL_DB, task, form, context, message);
-          legalSources = retrieval.sources;
-          sourceStatus = retrieval.status;
-        }
-
-        const sourceBlock = legalSources.length
-          ? `نتایج واقعی SQL از D1 (تنها منبع مجاز برای استناد ماده قانونی):\n${JSON.stringify(legalSources)}`
-          : `نتایج واقعی SQL از D1: هیچ رکورد قابل استفاده‌ای بازیابی نشد. وضعیت: ${sourceStatus}. در این حالت هیچ شماره ماده یا عنوان قانونی را حدس نزن.`;
-
-        const factsLedger = buildFactsLedger(form, context);
-        const userContent = `
-درخواست و اطلاعاتی که کاربر وارد کرده است:
-${message}
-
-بخش یا خدمت انتخاب‌شده در سایت:
-${task || "مشخص نشده"}
-
-دفتر قطعی اطلاعات کاربر، مرجع اصلی برای نام‌ها، نقش‌ها، تاریخ‌ها و مبالغ:
-${JSON.stringify(factsLedger)}
-
-اطلاعات خام فرم، بدون تغییر:
-${JSON.stringify(form)}
-
-اطلاعات تکمیلی یا سابقه مرتبط:
-${JSON.stringify(context)}
-
-${sourceBlock}
-
-دستور نهایی:
-تمام اطلاعات دفتر قطعی را دقیق حفظ کن. نقش اشخاص، جهت پرداخت، مبلغ و تاریخ‌های مربوط به رویدادهای مختلف را جابه‌جا یا بازتفسیر نکن. اگر واحد پولی مشخص نیست، واحدی اضافه نکن. اگر واقعیتی روشن نیست، آن را در متن نهایی نساز و فقط در توضیحات تکمیلی بیان کن. از درج هرگونه جای‌خالی، داده فرضی یا عبارت قالبی در متن نهایی خودداری کن.
-`;
-
-        let systemPrompt = SYSTEM_PROMPT;
-        if (task === "legal_revision_patch") systemPrompt = REVISION_SYSTEM_PROMPT;
-        else if (task === "classify_service") systemPrompt = CLASSIFY_SYSTEM_PROMPT;
-        else if (task === "connection_test") systemPrompt = CONNECTION_SYSTEM_PROMPT;
-
-        const result = await env.AI.run(
-          "@cf/meta/llama-3.1-8b-instruct-fast",
-          {
-            messages: [
-              { role: "system", content: systemPrompt },
-              { role: "user", content: userContent }
-            ],
-            max_tokens: task === "legal_revision_patch" ? 2600 : 3500
-          }
+        const retrieval = await searchLegalArticles(
+          env.LEGAL_DB,
+          task,
+          form,
+          context,
+          message
         );
-        const answer = typeof result?.response === "string"
-          ? result.response
-          : typeof result?.output_text === "string"
-            ? result.output_text
-            : typeof result?.text === "string"
-              ? result.text
-              : "";
 
-        if (!answer.trim()) {
-          console.error("Workers AI returned no text.", JSON.stringify(result).slice(0, 1000));
-          return json({ error: "هوش مصنوعی پاسخ متنی برنگرداند. لطفاً گزارش خطا را بررسی کنید." }, 502);
-        }
-
-        const factValidation = validateDraftFacts(answer.trim(), form, context, legalSources, task);
-        return json({ text: answer.trim(), sources: legalSources, sourceStatus, factValidation });
+        legalSources = retrieval.sources;
+        sourceStatus = retrieval.status;
       } catch (error) {
-        console.error("Legal AI error:", error);
-        return json({
-          error: "پردازش درخواست حقوقی ناموفق بود.",
-          details: String(error?.message || error).slice(0, 500)
-        }, 500);
+        console.error(
+          "Legal database search failed:",
+          error?.message || error
+        );
+
+        sourceStatus = "database_unavailable";
       }
     }
-    return env.ASSETS.fetch(request);
+
+    const systemPrompt = chooseSystemPrompt(task);
+
+    const userContent = buildUserContent({
+      task,
+      message,
+      form,
+      context,
+      previousDraft,
+      correctionNotes,
+      legalSources,
+      sourceStatus
+    });
+
+    try {
+      const result = await callAvalAI(env.AVALAI_API_KEY, {
+        model: AVALAI_MODEL,
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt
+          },
+          {
+            role: "user",
+            content: userContent
+          }
+        ],
+        max_tokens: task === "legal_revision_patch" ? 2600 : 3500,
+        temperature: 0.2,
+        stream: false
+      });
+
+      const answer = extractAnswer(result);
+
+      if (!answer.trim()) {
+        console.error(
+          "AvalAI returned empty content:",
+          JSON.stringify(result).slice(0, 1000)
+        );
+
+        return json({
+          error: "پاسخ متنی از سرویس هوش مصنوعی دریافت نشد."
+        }, 502);
+      }
+
+      return json({
+        text: answer.trim(),
+        answer: answer.trim(),
+        legal_sources_count: legalSources.length,
+        legal_source_status: sourceStatus
+      });
+
+    } catch (error) {
+      const status = Number(error?.status) || 502;
+
+      console.error(
+        "AvalAI request failed:",
+        status,
+        error?.message || error
+      );
+
+      let errorMessage =
+        "ارتباط با سرویس هوش مصنوعی برقرار نشد. لطفاً کمی بعد دوباره تلاش کنید.";
+
+      if (status === 401 || status === 403) {
+        errorMessage =
+          "کلید یا دسترسی سرویس هوش مصنوعی معتبر نیست. تنظیمات کلید را بررسی کنید.";
+      } else if (status === 429) {
+        errorMessage =
+          "درخواست‌های سرویس هوش مصنوعی موقتاً به سقف مجاز رسیده است. کمی بعد دوباره تلاش کنید.";
+      } else if (status === 400) {
+        errorMessage =
+          "سرویس هوش مصنوعی درخواست را نپذیرفت. تنظیمات مدل یا اطلاعات درخواست را بررسی کنید.";
+      }
+
+      return json({
+        error: errorMessage,
+        status
+      }, 502);
+    }
   }
 };
 
-async function searchLegalArticles(db, task, form, context, message = "") {
-  if (!db || typeof db.prepare !== "function") return { sources: [], status: "D1_BINDING_UNAVAILABLE" };
-  try {
-    const schema = await db.prepare("PRAGMA table_info(legal_articles)").all();
-    const columns = (schema?.results || []).map(x => String(x.name || "")).filter(Boolean);
-    if (!columns.length) return { sources: [], status: "LEGAL_ARTICLES_TABLE_UNAVAILABLE" };
+/* --------------------------------
+   اتصال به AvalAI
+-------------------------------- */
 
-    const allowed = columns.filter(name => /^[A-Za-z_][A-Za-z0-9_]*$/.test(name));
-    const searchable = allowed.filter(name => /law|title|article|text|content|keyword|subject|description|body|matter|madde|qanun/i.test(name));
-    if (!searchable.length) return { sources: [], status: "NO_SEARCHABLE_COLUMNS" };
+async function callAvalAI(apiKey, payload) {
+  const response = await fetch(AVALAI_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`
+    },
+    body: JSON.stringify(payload)
+  });
 
-    const formEntries = form && typeof form === "object" ? Object.entries(form).filter(([key, value]) => typeof value === "string" && value.trim()) : [];
-    const legalFieldNames = /story|claim|subject|topic|purpose|goal|action|details|evidence|attachment|description|request|reason|notes|شرح|خواسته|موضوع|دلیل|متن/i;
-    const formText = formEntries.filter(([key]) => legalFieldNames.test(key)).map(([, value]) => value).join(" ");
-    const correctionText = String(context?.correction_notes || "");
-    const userText = [formText, correctionText].filter(Boolean).join(" ");
-    let terms = extractSearchTerms(userText);
-    terms = expandLegalSynonyms(terms).slice(0, Math.max(1, Math.min(10, Math.floor(90 / searchable.length))));
-    if (!terms.length) return { sources: [], status: "NO_SEARCH_TERMS" };
+  if (!response.ok) {
+    const errorBody = await response.text().catch(() => "");
 
-    const columnsSql = searchable.map(name => `CAST("${name}" AS TEXT) LIKE ?`).join(" OR ");
-    const whereSql = terms.map(() => `(${columnsSql})`).join(" OR ");
-    const bindings = terms.flatMap(term => searchable.map(() => `%${term}%`));
-    const result = await db.prepare(`SELECT * FROM legal_articles WHERE ${whereSql} LIMIT 60`).bind(...bindings).all();
-    const rows = Array.isArray(result?.results) ? result.results : [];
-    if (!rows.length) return { sources: [], status: "NO_MATCHING_ARTICLES" };
+    console.error(
+      "AvalAI HTTP error:",
+      response.status,
+      errorBody.slice(0, 1000)
+    );
 
-    const ranked = rows.map(row => {
-      const lowerRow = Object.fromEntries(Object.entries(row).map(([key, value]) => [key.toLowerCase(), value]));
-      const keywordBlob = ["keywords", "keyword", "tags", "subject", "title", "law_name", "law_title"].map(k => String(lowerRow[k] ?? "")).join(" ").toLowerCase();
-      const bodyBlob = allowed.map(k => String(lowerRow[k.toLowerCase()] ?? "")).join(" ").toLowerCase();
-      const matchedTerms = terms.filter(term => bodyBlob.includes(term.toLowerCase()));
-      const score = terms.reduce((sum, term) => sum + (keywordBlob.includes(term.toLowerCase()) ? 3 : 0) + (bodyBlob.includes(term.toLowerCase()) ? 1 : 0), 0);
-      return { row: lowerRow, score, matchedTerms: matchedTerms.length };
-    }).filter(x => x.score > 0 && x.matchedTerms >= 2).sort((a, b) => b.score - a.score);
-
-    const seen = new Set();
-    const sources = [];
-    for (const item of ranked) {
-      const row = item.row;
-      const lawName = firstValue(row, ["law_name", "law_name_fa", "law_title", "law", "lawname", "source_name", "name", "title"]);
-      let articleNumber = firstValue(row, ["article_number", "article_no", "article_num", "madde_number", "madde_no", "number", "article_id"]);
-      if (!articleNumber && row.article !== undefined && String(row.article).length < 40) articleNumber = String(row.article);
-      const articleText = firstValue(row, ["article_text", "article_content", "article_content_fa", "full_text", "article_body", "content_text", "text", "content", "body", "description", "matn", "text_body"]);
-      const keywords = firstValue(row, ["keywords", "keyword", "tags", "subject", "keywords_fa"]);
-      if (!lawName || !articleNumber || !articleText) continue;
-      const identity = `${lawName}|${articleNumber}|${articleText.slice(0, 80)}`;
-      if (seen.has(identity)) continue;
-      seen.add(identity);
-      sources.push({ law_name: lawName, article_number: articleNumber, article_text: articleText, keywords, relevance_score: item.score });
-      if (sources.length >= 10) break;
-    }
-    return { sources, status: sources.length ? "OK" : "NO_USABLE_ROWS" };
-  } catch (error) {
-    console.error("D1 legal article lookup failed:", String(error?.message || error));
-    return { sources: [], status: "SQL_QUERY_FAILED" };
+    const error = new Error(`AvalAI HTTP ${response.status}`);
+    error.status = response.status;
+    throw error;
   }
+
+  return await response.json();
 }
 
-function buildFactsLedger(form, context) {
-  const source = form && typeof form === "object" && !Array.isArray(form) ? form : {};
-  const labels = {
-    plaintiff: "خواهان", defendant: "خوانده", complainant: "شاکی", accused: "مشتکی‌عنه",
-    sender: "فرستنده/اظهارکننده", receiver: "مخاطب", recipient: "مخاطب",
-    claim: "خواسته", subject: "موضوع", topic: "موضوع", value: "مبلغ/بهای خواسته",
-    story: "شرح خام کاربر", evidence: "دلایل و مستندات", attachments: "پیوست‌ها",
-    date: "تاریخ واردشده", case: "شماره یا عنوان پرونده", court: "مرجع رسیدگی"
-  };
-  const entries = Object.entries(source).filter(([, v]) => typeof v === "string" && v.trim()).map(([k, v]) => ({ field: k, meaning: labels[k] || k, exact_value: v.trim() }));
-  return {
-    entries,
-    previous_draft: typeof context?.previous_draft === "string" ? context.previous_draft : "",
-    correction_notes: typeof context?.correction_notes === "string" ? context.correction_notes : "",
-    fixed_rules: [
-      "نقش‌های صریح خواهان/خوانده یا شاکی/مشتکی‌عنه را جابه‌جا نکن",
-      "هیچ مبلغی را با افزودن یا حذف صفر تغییر نده",
-      "واحد تومان/ریال را فقط اگر کاربر گفته درج کن",
-      "تاریخ هر رویداد مستقل است و نباید با تاریخ رویداد دیگر جایگزین شود",
-      "رابطه مالی متقابل یا قرارداد ناگفته نساز",
-      "جای‌خالی یا عبارت نمونه داخل متن نهایی نگذار"
-    ]
-  };
-}
+function extractAnswer(result) {
+  const content = result?.choices?.[0]?.message?.content;
 
-function normalizeDigits(value) {
-  return String(value || "").replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))).replace(/[٠-٩]/g, d => String("٠١٢٣٤٥٦٧٨٩".indexOf(d))).replace(/ي/g, "ی").replace(/ك/g, "ک");
-}
-function numericFacts(text) {
-  const normalized = normalizeDigits(text);
-  const matches = normalized.match(/(?<!\d)(?:\d{1,3}(?:[\s,٬،.]\d{3})+|\d{4,})(?!\d)/g) || [];
-  return matches.map(x => x.replace(/\D/g, "")).filter(x => x.length >= 4);
-}
-function dateFacts(text) {
-  const normalized = normalizeDigits(text).replace(/\s+/g, " ");
-  const months = "فروردین|اردیبهشت|خرداد|تیر|مرداد|شهریور|مهر|آبان|آذر|دی|بهمن|اسفند";
-  const result = [];
-  const re = new RegExp(`(\\d{1,2})\\s*(${months})\\s*(\\d{4})`, "g");
-  let m;
-  while ((m = re.exec(normalized))) result.push(`${Number(m[1])}|${m[2]}|${m[3]}`);
-  const iso = /(\d{4})[-/](\d{1,2})[-/](\d{1,2})/g;
-  while ((m = iso.exec(normalized))) result.push(`ISO|${Number(m[1])}|${Number(m[2])}|${Number(m[3])}`);
-  return result;
-}
-function dateAmountPairs(text) {
-  const normalized = normalizeDigits(text).replace(/\s+/g, " ");
-  const months = "فروردین|اردیبهشت|خرداد|تیر|مرداد|شهریور|مهر|آبان|آذر|دی|بهمن|اسفند";
-  const dateRe = new RegExp(`(\\d{1,2})\\s*(${months})\\s*(\\d{4})`, "g");
-  const dates = [];
-  let dm;
-  while ((dm = dateRe.exec(normalized))) dates.push({ value: `${Number(dm[1])}|${dm[2]}|${dm[3]}`, index: dm.index });
-  const amountRe = /(?<!\d)(?:\d{1,3}(?:[\s,٬،.]\d{3})+|\d{5,})(?!\d)/g;
-  const amounts = [];
-  let am;
-  while ((am = amountRe.exec(normalized))) {
-    const value = am[0].replace(/\D/g, "");
-    if (value.length >= 5) amounts.push({ value, index: am.index });
+  if (typeof content === "string") {
+    return content;
   }
-  const pairs = [];
-  for (const date of dates) {
-    let nearest = null;
-    for (const amount of amounts) {
-      const distance = Math.abs(amount.index - date.index);
-      if (distance <= 55 && (!nearest || distance < nearest.distance)) nearest = { value: amount.value, distance };
-    }
-    if (nearest) pairs.push(`${nearest.value}|${date.value}`);
+
+  if (Array.isArray(content)) {
+    return content
+      .map(part => typeof part?.text === "string" ? part.text : "")
+      .filter(Boolean)
+      .join("\n");
   }
-  return pairs;
+
+  if (typeof result?.output_text === "string") {
+    return result.output_text;
+  }
+
+  return "";
 }
 
-function validateDraftFacts(answer, form, context, sources, task) {
-  if (["classify_service", "connection_test"].includes(task)) return { ok: true, issues: [] };
-  const sourceText = [
-    ...(form && typeof form === "object" ? Object.values(form).filter(v => typeof v === "string") : []),
-    ...(task === "legal_revision_patch" ? [] : [String(context?.previous_draft || "")]),
-    String(context?.correction_notes || "")
-  ].join("\n");
-  let candidate = String(answer || "");
+function chooseSystemPrompt(task) {
+  if (task === "connection_test") {
+    return CONNECTION_SYSTEM_PROMPT;
+  }
+
+  if (task === "classify_service") {
+    return CLASSIFY_SYSTEM_PROMPT;
+  }
+
   if (task === "legal_revision_patch") {
-    try {
-      const raw = candidate.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
-      const obj = JSON.parse(raw);
-      candidate = [...(obj.changes || []).map(x => `${x.replacement_text || ""}`), ...(obj.insertions || []).map(x => `${x.text || ""}`)].join("\n");
-    } catch { /* JSON parsing is validated by the client; keep raw text for conservative checks. */ }
-  } else {
-    const finalStart = candidate.indexOf("[[متن نهایی]]");
-    const explStart = candidate.indexOf("[[توضیحات تکمیلی]]");
-    if (finalStart >= 0 && explStart > finalStart) candidate = candidate.slice(finalStart + "[[متن نهایی]]".length, explStart);
-    else {
-      const alt = candidate.match(/(?:متن نهایی|متن قابل ارائه)\s*[:：]([\s\S]*?)(?:توضیحات تکمیلی|توضیحات سامانه)\s*[:：]/);
-      if (alt) candidate = alt[1];
+    return REVISION_SYSTEM_PROMPT;
+  }
+
+  return SYSTEM_PROMPT;
+}
+
+/* --------------------------------
+   آماده‌سازی اطلاعات درخواست
+-------------------------------- */
+
+function buildUserContent({
+  task,
+  message,
+  form,
+  context,
+  previousDraft,
+  correctionNotes,
+  legalSources,
+  sourceStatus
+}) {
+  const sections = [];
+
+  sections.push(`نوع درخواست: ${task}`);
+  sections.push(`شرح درخواست کاربر:\n${message}`);
+
+  const cleanForm = removeEmptyValues(form);
+
+  if (Object.keys(cleanForm).length > 0) {
+    sections.push(
+      `اطلاعات فرم اعلام‌شده از سوی کاربر:\n${safeJson(cleanForm)}`
+    );
+  }
+
+  const cleanContext = removeEmptyValues({
+    ...context,
+    previous_draft: undefined,
+    correction_notes: undefined
+  });
+
+  if (Object.keys(cleanContext).length > 0) {
+    sections.push(`اطلاعات تکمیلی:\n${safeJson(cleanContext)}`);
+  }
+
+  if (previousDraft) {
+    sections.push(`پیش‌نویس قبلی:\n${previousDraft}`);
+  }
+
+  if (correctionNotes) {
+    sections.push(`اصلاحات درخواستی:\n${correctionNotes}`);
+  }
+
+  sections.push(buildSourceBlock(legalSources, sourceStatus));
+
+  sections.push(`
+دستورهای مهم:
+- کاربر ممکن است محاوره‌ای، ناقص یا با غلط املایی بنویسد. منظور او را حفظ و متن را حرفه‌ای کن.
+- فیلدهای خالی را مانع تولید متن ندان.
+- اطلاعاتی که کاربر ارائه نکرده است نساز.
+- در دادخواست، شکواییه، اظهارنامه و لایحه، ساختار حقوقی مناسب موضوع را رعایت کن.
+- «بهای خواسته» را فقط وقتی درج کن که کاربر اعلام کرده یا برای موضوع ضروری است.
+- فهرست ادله و پیوست‌ها را فقط از اطلاعات واقعی ارائه‌شده تنظیم کن.
+- در نامه اداری، نام مرجع یا سازمان ناشناخته را حدس نزن.
+- در تحلیل رأی قضایی، ابتدا نتیجه و دستور اصلی را توضیح بده، سپس آثار احتمالی و اقدامات بعدی را با تفکیک موارد قطعی از موارد احتمالی بیان کن.
+- برای پاسخ حقوقی، استناد قانونی فقط زمانی مجاز است که ماده و نام قانون در منابع بازیابی‌شده وجود داشته باشند و واقعاً به موضوع مرتبط باشند.
+- از بانک قوانین فقط مطالب مرتبط را انتخاب کن؛ وجود یک ماده در نتایج جست‌وجو به‌تنهایی به معنی ارتباط آن با موضوع نیست.
+- اگر منبع قانونی کافی وجود ندارد، این موضوع را در توضیحات تکمیلی شفاف بیان کن.
+- متن رسمی و توضیح ساده را با دو نشانه مشخص‌شده در دستور سیستم از هم جدا کن.
+`);
+
+  return sections.join("\n\n");
+}
+
+/* --------------------------------
+   جست‌وجو در دیتابیس قوانین D1
+-------------------------------- */
+
+async function searchLegalArticles(
+  db,
+  task,
+  form,
+  context,
+  message
+) {
+  if (!db || typeof db.prepare !== "function") {
+    return {
+      sources: [],
+      status: "database_unavailable"
+    };
+  }
+
+  const tableInfo = await db
+    .prepare("PRAGMA table_info(legal_articles)")
+    .all();
+
+  const columns = Array.isArray(tableInfo?.results)
+    ? tableInfo.results
+    : [];
+
+  if (columns.length === 0) {
+    return {
+      sources: [],
+      status: "no_match"
+    };
+  }
+
+  const columnNames = columns
+    .map(column => String(column.name || ""))
+    .filter(Boolean);
+
+  const lowerMap = new Map(
+    columnNames.map(name => [name.toLowerCase(), name])
+  );
+
+  const lawColumn = pickColumn(lowerMap, [
+    "law_name",
+    "law",
+    "legal_name",
+    "name_of_law",
+    "title",
+    "قانون",
+    "نام_قانون"
+  ]);
+
+  const articleColumn = pickColumn(lowerMap, [
+    "article_number",
+    "article",
+    "article_no",
+    "number",
+    "ماده",
+    "شماره_ماده"
+  ]);
+
+  const textColumn = pickColumn(lowerMap, [
+    "article_text",
+    "text",
+    "content",
+    "body",
+    "description",
+    "متن",
+    "متن_ماده"
+  ]);
+
+  if (!textColumn) {
+    console.error("Could not identify legal article text column.");
+    return {
+      sources: [],
+      status: "no_match"
+    };
+  }
+
+  const inputText = [
+    message,
+    ...Object.values(form),
+    ...Object.values(context)
+  ]
+    .map(value => {
+      if (typeof value === "string" || typeof value === "number") {
+        return String(value);
+      }
+
+      return "";
+    })
+    .join(" ");
+
+  const terms = extractSearchTerms(inputText);
+
+  if (terms.length === 0) {
+    return {
+      sources: [],
+      status: "no_match"
+    };
+  }
+
+  const searchableColumns = columnNames.filter(name =>
+    /law|article|text|content|title|description|subject|keyword|قانون|ماده|متن|عنوان|موضوع|کلید/i.test(name)
+  );
+
+  if (!searchableColumns.includes(textColumn)) {
+    searchableColumns.push(textColumn);
+  }
+
+  const expandedTerms = expandLegalSynonyms(terms).slice(0, 16);
+
+  const conditions = [];
+  const bindings = [];
+
+  for (const term of expandedTerms) {
+    for (const column of searchableColumns) {
+      conditions.push(`${quoteIdentifier(column)} LIKE ?`);
+      bindings.push(`%${escapeLike(term)}%`);
     }
   }
-  const normalizedAnswer = normalizeDigits(candidate);
-  const sourceNumbers = new Set(numericFacts(sourceText));
-  const allowedLegalNumbers = new Set((sources || []).map(s => numericFacts(String(s.article_number || ""))).flat());
-  const inputNums = [...sourceNumbers].map(Number).filter(n => Number.isFinite(n) && n > 0);
-  const amountCandidates = inputNums.filter(n => n >= 10000 && n <= 1e15);
-  if (amountCandidates.length >= 2) {
-    const sum = amountCandidates.reduce((a, b) => a + b, 0);
-    if (Number.isSafeInteger(sum) && sum <= 1e15) sourceNumbers.add(String(sum));
+
+  if (conditions.length === 0) {
+    return {
+      sources: [],
+      status: "no_match"
+    };
   }
-  const unknownNumbers = [...new Set(numericFacts(normalizedAnswer).filter(n => !sourceNumbers.has(n) && !allowedLegalNumbers.has(n)))];
-  const sourceArticleNumbers = new Set((sources || []).map(s => normalizeDigits(String(s.article_number || "")).match(/\d+/g) || []).flat());
-  const allArticleMentions = normalizeDigits(String(answer || "")).matchAll(/(?:ماده|مواد)\s*([0-9]{1,4})/g);
-  const unsupportedArticles = [...new Set([...allArticleMentions].map(m => m[1]).filter(n => !sourceArticleNumbers.has(n)))];
-  const sourceDates = new Set(dateFacts(sourceText));
-  const answerDates = dateFacts(normalizedAnswer);
-  const unknownDates = answerDates.filter(d => !sourceDates.has(d));
-  const sourceDateAmountPairs = new Set(dateAmountPairs(sourceText));
-  const answerDateAmountPairs = dateAmountPairs(normalizedAnswer);
-  const mismatchedDateAmountPairs = answerDateAmountPairs.filter(pair => !sourceDateAmountPairs.has(pair));
-  const sourceHasCurrency = /تومان|ریال/.test(sourceText);
-  const answerHasCurrency = /تومان|ریال/.test(normalizedAnswer);
-  const issues = [];
-  if (unknownNumbers.length) issues.push(`عدد یا مبلغی در پاسخ آمده که در اطلاعات ورودی یا منابع قانونی پیدا نشد: ${unknownNumbers.join("، ")}`);
-  if (unsupportedArticles.length) issues.push(`استناد قانونی بدون تطبیق با رکورد SQL دیده شد: ماده ${unsupportedArticles.join("، ")}`);
-  if (sourceDates.size && unknownDates.length) issues.push("یک یا چند تاریخ کامل با تاریخ‌های واردشده تطبیق ندارد؛ احتمال جابه‌جایی روز، ماه یا سال وجود دارد.");
-  if (sourceDateAmountPairs.size && mismatchedDateAmountPairs.length) issues.push("ارتباط مبلغ و تاریخ در پاسخ با اطلاعات ورودی تطبیق ندارد؛ احتمال جابه‌جایی تاریخ دو پرداخت یا سند وجود دارد.");
-  if (!sourceHasCurrency && answerHasCurrency) issues.push("واحد پولی تومان/ریال در متن تولیدشده اضافه شده، اما کاربر آن را مشخص نکرده است.");
-  const sourceShowsLending = /قرض\s*(?:دادم|داده\s*ام|داده‌ام)|پول(?:م|مو|ی)[\s\S]{0,30}(?:فرض|قرض)\s*داد|پرداخت\s*(?:کردم|کرده\s*ام|کرده‌ام)/.test(sourceText);
-  const sourceWantsReturn = /پول(?:م|مو|ی خود)?[\s\S]{0,45}(?:پس بگیر|بس بگیر|بازگردان|برگردان|استرداد)|قرض[\s\S]{0,35}پس بگیر/.test(sourceText);
-  const defendantName = String(form?.defendant || "").trim();
-  const plaintiffName = String(form?.plaintiff || "").trim();
-  const inverseLoan = /(?:به من|به خواهان|به شاکی)[\s\S]{0,30}قرض\s*(?:داد|داده|داده\s*است)|(?:از خوانده|از متهم)[\s\S]{0,30}قرض\s*(?:گرفتم|گرفته\s*ام|گرفته‌ام)/.test(normalizedAnswer) || (defendantName && new RegExp(`${defendantName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}.{0,70}(?:به من|به خواهان|${plaintiffName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}).{0,25}قرض\\s*(?:داد|داده)`).test(normalizedAnswer));
-  if (sourceShowsLending && sourceWantsReturn && inverseLoan) issues.push("جهت رابطه مالی برعکس شده است: ورودی می‌گوید کاربر پول خود را پس می‌خواهد، اما پاسخ ادعا می‌کند خوانده به خواهان قرض داده است.");
-  const roles = [["plaintiff", "خواهان"], ["defendant", "خوانده"], ["complainant", "شاکی"], ["accused", "مشتکی‌عنه"]];
-  for (const [key, label] of roles) {
-    const expected = String(form?.[key] || "").trim();
-    if (!expected) continue;
-    const line = normalizedAnswer.split(/\r?\n/).find(x => new RegExp(`^\\s*${label}\\s*[:：]`).test(x));
-    if (line && !line.includes(expected)) issues.push(`سمت «${label}» با اطلاعات فرم تطبیق ندارد؛ مقدار ثبت‌شده «${expected}» است.`);
+
+  const sql = `
+    SELECT *
+    FROM legal_articles
+    WHERE ${conditions.join(" OR ")}
+    LIMIT 100
+  `;
+
+  const queryResult = await db
+    .prepare(sql)
+    .bind(...bindings)
+    .all();
+
+  const rows = Array.isArray(queryResult?.results)
+    ? queryResult.results
+    : [];
+
+  if (rows.length === 0) {
+    return {
+      sources: [],
+      status: "no_match"
+    };
   }
-  const placeholder = /\[(?:شماره پرونده|نام قانون|ماده قانونی|نام و نام خانوادگی|مبلغ دقیق|مرجع صالح)[^\]]*\]|شرح (?:ادعا|واقعه|درخواست) درج شود|دلایل درج شود|(?:^|[\s،؛])حسب مورد(?:$|[\s،؛])/.test(normalizedAnswer);
-  if (placeholder) issues.push("پاسخ شامل جای‌خالی یا عبارت قالبی است و برای متن نهایی قابل‌قبول نیست.");
-  return { ok: issues.length === 0, issues };
+
+  const normalizedTerms = expandedTerms.map(normalizeText);
+
+  const rankedRows = rows
+    .map(row => {
+      const searchableText = searchableColumns
+        .map(column => String(row[column] ?? ""))
+        .join(" ");
+
+      const normalizedRow = normalizeText(searchableText);
+
+      let score = 0;
+
+      for (const term of normalizedTerms) {
+        if (normalizedRow.includes(term)) {
+          score += 3;
+        }
+      }
+
+      if (lawColumn && row[lawColumn]) {
+        score += 1;
+      }
+
+      if (articleColumn && row[articleColumn]) {
+        score += 2;
+      }
+
+      if (textColumn && row[textColumn]) {
+        score += 2;
+      }
+
+      return {
+        row,
+        score
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10);
+
+  const sources = rankedRows
+    .map(({ row }) => ({
+      law_name: lawColumn
+        ? safeString(row[lawColumn], 300)
+        : "",
+      article_number: articleColumn
+        ? safeString(row[articleColumn], 100)
+        : "",
+      article_text: textColumn
+        ? safeString(row[textColumn], 5000)
+        : ""
+    }))
+    .filter(source => source.article_text.trim());
+
+  return {
+    sources,
+    status: sources.length > 0 ? "matched" : "no_match"
+  };
+}
+
+function buildSourceBlock(sources, status) {
+  if (!sources || sources.length === 0) {
+    let reason;
+
+    if (status === "database_unavailable") {
+      reason = "دسترسی به بانک قوانین برقرار نشد.";
+    } else if (status === "no_match") {
+      reason = "جست‌وجو در بانک قوانین ماده مرتبطی پیدا نکرد.";
+    } else {
+      reason = "منبع قانونی قابل استناد بازیابی نشده است.";
+    }
+
+    return `
+مواد بازیابی‌شده از بانک قوانین:
+${reason}
+در این وضعیت شماره ماده یا نام قانون را حدس نزن.
+`;
+  }
+
+  const sourceText = sources.map((source, index) => {
+    return [
+      `${index + 1}.`,
+      `نام قانون: ${source.law_name || "در رکورد مشخص نشده"}`,
+      `شماره ماده: ${source.article_number || "در رکورد مشخص نشده"}`,
+      `متن ماده: ${source.article_text}`
+    ].join("\n");
+  });
+
+  return `
+مواد بازیابی‌شده از بانک قوانین:
+${sourceText.join("\n\n")}
+
+فقط مواد مرتبط با موضوع درخواست را انتخاب کن.
+اگر ارتباط ماده با موضوع روشن نیست، به آن استناد نکن.
+`;
+}
+
+/* --------------------------------
+   استخراج و گسترش واژه‌های جست‌وجو
+-------------------------------- */
+
+function extractSearchTerms(value) {
+  const normalized = normalizeText(value);
+
+  const stopWords = new Set([
+    "برای", "از", "به", "در", "با", "که", "این", "آن",
+    "را", "و", "یا", "من", "ما", "شما", "ایشان", "است",
+    "بود", "شد", "شود", "کرد", "کرده", "می", "یک", "هم",
+    "اگر", "اما", "تا", "بر", "موضوع", "درخواست", "لطفا",
+    "خواهشمند", "مبلغ", "تاریخ", "شماره", "حقوقی"
+  ]);
+
+  const tokens = normalized
+    .split(/[^آ-یa-z0-9]+/i)
+    .map(token => token.trim())
+    .filter(token =>
+      token.length >= 3 &&
+      !stopWords.has(token)
+    );
+
+  const counts = new Map();
+
+  for (const token of tokens) {
+    counts.set(token, (counts.get(token) || 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([token]) => token)
+    .slice(0, 12);
 }
 
 function expandLegalSynonyms(terms) {
-  const expanded = [...terms];
   const groups = [
-    [["پول", "پولم", "وجوه", "وجه", "مبلغ", "مالی"], ["مطالبه", "استرداد", "دین"]],
-    [["قرض", "قرضی", "قرضدادم", "قرض دادم", "پس", "پسگرفتن", "برگرداندن", "بازگرداندن"], ["قرض", "استرداد", "مطالبه", "وجه"]],
-    [["پرداخت", "پرداختم", "رسید", "واریز", "واریزی", "اسناد"], ["پرداخت", "اثبات", "سند", "رسید"]],
-    [["قرارداد", "تعهد", "توافق"], ["تعهد", "قرارداد", "الزام"]]
+    ["مهریه", "صداق", "سکه", "زوج", "زوجه", "نفقه"],
+    ["اجرای", "احکام", "توقیف", "حساب", "حقوق", "مستثنیات"],
+    ["چک", "صیاد", "دارنده", "صادرکننده", "گواهی", "پرداخت"],
+    ["اجاره", "موجر", "مستاجر", "تخلیه", "ودیعه", "سرقفلی"],
+    ["کارگر", "کارفرما", "دستمزد", "اخراج", "بیمه"],
+    ["قرارداد", "تعهد", "فسخ", "خسارت", "وجه", "التزام"],
+    ["کیفری", "شکایت", "شکواییه", "جرم", "مجازات", "متهم"],
+    ["خانواده", "طلاق", "حضانت", "نفقه", "مهریه", "تمکین"],
+    ["مالکیت", "ملک", "سند", "تصرف", "خلع", "ید"]
   ];
-  for (const [needles, additions] of groups) if (needles.some(n => expanded.some(t => t.includes(n)))) for (const a of additions) if (!expanded.includes(a)) expanded.push(a);
-  return expanded;
+
+  const expanded = [...terms];
+
+  for (const group of groups) {
+    const matches = group.some(word =>
+      terms.some(term =>
+        term.includes(word) || word.includes(term)
+      )
+    );
+
+    if (matches) {
+      expanded.push(...group);
+    }
+  }
+
+  return [...new Set(expanded)];
 }
 
-function extractSearchTerms(text) {
-  const normalized = String(text || "").replace(/ي/g, "ی").replace(/ك/g, "ک").replace(/[۰-۹٠-٩]/g, " ").replace(/[^؀-ۿ\s]/g, " ");
-  const stop = new Set([
-    "این", "برای", "است", "هست", "شود", "شده", "کنم", "کند", "کنید", "کردن", "کرده", "کردم", "باید", "میباشد", "باشد", "دارم", "دارد", "دارند", "میخواهم", "میخوام", "میشه", "آنها", "ایشان", "خودم", "خودش", "لطفا", "خواهشمند", "متن", "نهایی", "توضیحات", "تکمیلی", "قانون", "ماده", "حقوقی", "درخواست", "موضوع", "شرح", "اطلاعات", "پرونده", "شخص", "کاربر", "میان", "بخش", "شما", "من", "و", "یا", "از", "به", "با", "در", "را", "که", "تا", "اگر", "هم", "اما", "بعد", "قبل", "روی", "یک", "هر", "چه", "چرا", "چطور", "برایم", "خود", "بدون", "فقط", "همین", "مربوط", "بیشتر", "کمتر", "مورد", "موجود", "مختلف", "کننده", "مرتبط", "محسن", "عبدی", "خواهان", "خوانده", "شاکی", "مشتکیعنه", "تاریخ", "مبلغ", "شماره", "ریال", "تومان", "مهر", "آبان", "۱۴۰۰", "۱۴۰۴"
-  ]);
-  const tokens = normalized.match(/[\u0600-\u06FF]{3,}/g) || [];
-  const unique = [];
-  for (const token of tokens) {
-    if (stop.has(token) || unique.includes(token)) continue;
-    unique.push(token);
-    if (unique.length >= 18) break;
+/* --------------------------------
+   توابع کمکی
+-------------------------------- */
+
+function pickColumn(lowerMap, candidates) {
+  for (const candidate of candidates) {
+    const found = lowerMap.get(candidate.toLowerCase());
+
+    if (found) {
+      return found;
+    }
   }
-  return unique;
-}
-function firstValue(row, keys) {
-  for (const key of keys) {
-    const value = row?.[key];
-    if (value !== undefined && value !== null && String(value).trim()) return String(value).trim();
+
+  const entries = [...lowerMap.entries()];
+
+  for (const candidate of candidates) {
+    const key = candidate.toLowerCase();
+
+    const found = entries.find(([name]) =>
+      name.includes(key)
+    );
+
+    if (found) {
+      return found[1];
+    }
   }
+
   return "";
 }
-function safeString(value, maxLength) {
-  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
+
+function quoteIdentifier(value) {
+  return `"${String(value).replace(/"/g, '""')}"`;
 }
-function safeJson(value, maxLength) {
-  if (value === undefined || value === null) return {};
-  try {
-    const serialized = JSON.stringify(value);
-    if (!serialized || serialized.length > maxLength) return { note: "اطلاعات ارسالی بیش از حد طولانی است." };
-    return JSON.parse(serialized);
-  } catch {
+
+function escapeLike(value) {
+  return String(value).replace(/[\\%_]/g, "\\$&");
+}
+
+function normalizeText(value) {
+  return normalizeDigits(String(value || ""))
+    .replace(/[يى]/g, "ی")
+    .replace(/ك/g, "ک")
+    .replace(/[\u064B-\u065F\u0670]/g, "")
+    .replace(/[ۀة]/g, "ه")
+    .replace(/\u200c/g, " ")
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizeDigits(value) {
+  return String(value || "")
+    .replace(/[۰-۹]/g, digit =>
+      String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit))
+    )
+    .replace(/[٠-٩]/g, digit =>
+      String("٠١٢٣٤٥٦٧٨٩".indexOf(digit))
+    );
+}
+
+function removeEmptyValues(value) {
+  if (!isPlainObject(value)) {
     return {};
   }
+
+  const output = {};
+
+  for (const [key, item] of Object.entries(value)) {
+    if (item === null || item === undefined) {
+      continue;
+    }
+
+    if (typeof item === "string" && !item.trim()) {
+      continue;
+    }
+
+    if (Array.isArray(item) && item.length === 0) {
+      continue;
+    }
+
+    if (
+      isPlainObject(item) &&
+      Object.keys(removeEmptyValues(item)).length === 0
+    ) {
+      continue;
+    }
+
+    output[key] = item;
+  }
+
+  return output;
 }
-function json(data, status = 200) {
+
+function isPlainObject(value) {
+  return Boolean(value) &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    Object.getPrototypeOf(value) === Object.prototype;
+}
+
+function safeString(value, maxLength = 10000) {
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  if (typeof value === "string") {
+    return value.slice(0, maxLength);
+  }
+
+  if (
+    typeof value === "number" ||
+    typeof value === "boolean"
+  ) {
+    return String(value).slice(0, maxLength);
+  }
+
+  try {
+    return JSON.stringify(value).slice(0, maxLength);
+  } catch {
+    return "";
+  }
+}
+
+function safeJson(value) {
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return "{}";
+  }
+}
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS"
+  };
+}
+
+function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" }
+    headers: {
+      ...corsHeaders(),
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      ...extraHeaders
+    }
   });
 }
